@@ -51,5 +51,8 @@ TagManager:
   - name: New Layer 2
     uniqueID: 2920969233
     locked: 0
+  - name: Menu
+    uniqueID: 668511525
+    locked: 0
   m_RenderingLayers:
   - Default
