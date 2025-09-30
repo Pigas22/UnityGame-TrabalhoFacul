@@ -18,7 +18,8 @@ public class PlayerHitBox : MonoBehaviour
         {
             Debug.Log("Player hit a enemy!");
             colidindoComInimigo = true;
-            collision.GetComponent<EnemyManager>().takeDamage(1);
+            
+            collision.GetComponent<EnemyBase>().TakeDamage(1);
         }
     
     }

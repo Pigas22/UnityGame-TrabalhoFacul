@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Diagnostics;
 using UnityEngine.SceneManagement;
 
 public class SceneTestManager : MonoBehaviour
@@ -10,14 +11,14 @@ public class SceneTestManager : MonoBehaviour
     [SerializeField] private Transform playerSpawnPoint;
     [SerializeField] private GameObject pauseMenuManager;
     [SerializeField] private Camera mainCamera;
-    [SerializeField] private Vector2 camLimits = new Vector2(2.5f, 1f);
+    [SerializeField] private Vector2 camLimits = new Vector2(25f, 10f);
     [SerializeField] private bool isPaused = false;
 
     void Awake()
     {
         if (mainCamera == null)
         {
-            mainCamera = Camera.main;
+            mainCamera = GameManagement.MainCamera;
         }
         DontDestroyOnLoad(mainCamera.gameObject);
 

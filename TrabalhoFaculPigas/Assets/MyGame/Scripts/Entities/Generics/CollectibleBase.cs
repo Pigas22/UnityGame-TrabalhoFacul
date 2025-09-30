@@ -5,6 +5,7 @@ public abstract class CollectibleBase : MonoBehaviour
 {
     [SerializeField] protected int scoreValue = 1;
     [SerializeField] protected string collectibleName = "Collectible";
+    [SerializeField] protected Animator animator;
 
     public void OnCollect(GameObject obj)
     {

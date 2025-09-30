@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -13,11 +14,12 @@ public class PlayerManager : CharacterBase, IMovable
     [SerializeField] private bool isGrounded;
     [SerializeField] private bool isJumping = false;
     [SerializeField] private bool isRunning = false;
+    [SerializeField] private bool isTakingDamage = false;
+    [SerializeField] private bool canMove = true;
 
     private Rigidbody2D playerRB;
     private SpriteRenderer playerSR;
     private CapsuleCollider2D playerCC;
-    private Camera mainCamera;
     private GameObject sceneManager;
 
 
@@ -26,6 +28,7 @@ public class PlayerManager : CharacterBase, IMovable
     private int isJumpingHash = Animator.StringToHash("isJumping");
     private int isGroundedHash = Animator.StringToHash("isGrounded");
     private int isTeleportingHash = Animator.StringToHash("isTeleporting");
+    private int isTakingDamageHash = Animator.StringToHash("isTakingDamage");
 
     void Awake()
     {
@@ -45,7 +48,6 @@ public class PlayerManager : CharacterBase, IMovable
         sceneManager = GameObject.Find("SceneManager");
         // transform.position = sceneManager.GetComponent<SceneTestManager>().GetPlayerSpawnPoint();
         TeleportToSpawn();
-        mainCamera = Camera.main;
 
         playerRB = GetComponent<Rigidbody2D>();
         playerSR = GetComponent<SpriteRenderer>();
@@ -78,6 +80,19 @@ public class PlayerManager : CharacterBase, IMovable
         {
             OutOfCam();
         }
+
+        if (!canMove && !isTakingDamage)
+        {
+            playerRB.linearVelocityX = 0;
+            playerRB.linearVelocityY = 0;
+
+            isJumping = false;
+            isRunning = false;
+            isGrounded = false;
+
+            UpdatePlayerStats();
+            UpdateAnimations();
+        }
     }
 
     public void Walk()
@@ -85,7 +100,7 @@ public class PlayerManager : CharacterBase, IMovable
         float walkInput = Input.GetAxis("Horizontal");
         playerRB.linearVelocityX = walkInput * playerSpeed;
 
-        if (walkInput != 0)
+        if (walkInput != 0 && canMove)
         {
             // Debug.Log("Player velocity X: " + playerRB.linearVelocityX);
 
@@ -106,7 +121,7 @@ public class PlayerManager : CharacterBase, IMovable
     {
         if (Input.GetButtonDown("Jump")
                             // && Mathf.Abs(playerRB.linearVelocityY) < 0.001f
-                            && isGrounded)
+                            && isGrounded && canMove)
         {
             playerRB.linearVelocityY = jumpForce;
             UpdatePlayerStats();
@@ -132,35 +147,50 @@ public class PlayerManager : CharacterBase, IMovable
 
     private void OutOfCam()
     {
-        Vector3 viewportPoint = GameManagement.positionToViewPortPoint(this.GameObject());
-        bool outOfXAxe = viewportPoint.x < 0 || viewportPoint.x > 1;
-        bool outOfYAxe = viewportPoint.y < 0 || viewportPoint.y > 1;
-
-        if (outOfYAxe)
+        if (GameManagement.OutOfCam(gameObject) && !isTakingDamage)
         {
-            TeleportToSpawn();
             TakeDamage(1);
         }
 
-        if (outOfXAxe)
-        {
-            TeleportToSpawn();
-            TakeDamage(1);
+        // if (outOfXAxe)
+        // {
+        //     TakeDamage(1);
 
-            // Vector3 newViewportPoint = viewportPoint;
-            // newViewportPoint.x = (newViewportPoint.x < 0) ? 0.99f : 0.01f;
-            // Vector3 targetPosition = GameManagement.viewPortPointToPosition(newViewportPoint);
+        //     // Vector3 newViewportPoint = viewportPoint;
+        //     // newViewportPoint.x = (newViewportPoint.x < 0) ? 0.99f : 0.01f;
+        //     // Vector3 targetPosition = GameManagement.viewPortPointToPosition(newViewportPoint);
 
-            // if 
-            // {
-            //     teleportToSpawn();
-            //     TakeDamage(1);
-            // }
-        }
+        //     // if 
+        //     // {
+        //     //     teleportToSpawn();
+        //     //     TakeDamage(1);
+        //     // }
+        // }
+    }
+
+    public override void TakeDamage(int amount)
+    {
+        canMove = false;
+        isTakingDamage = true;
+
+        StartCoroutine(TakingDamageRoutine());
+
+        animator.SetBool(isTakingDamageHash, isTakingDamage);
+        playerRB.linearVelocityY = jumpForce * 2;
+        playerRB.linearVelocityX = 1;
+        base.TakeDamage(amount);
+    }
+
+    void OnDamageAnimationEnd()
+    {
+        isTakingDamage = false;
+        animator.SetBool(isTakingDamageHash, isTakingDamage);
+        TeleportToSpawn();
     }
 
     void TeleportToSpawn()
     {
+        canMove = false;
         animator.SetBool(isTeleportingHash, true);
         transform.position = sceneManager.GetComponent<SceneTestManager>().GetPlayerSpawnPoint();
     }
@@ -168,6 +198,7 @@ public class PlayerManager : CharacterBase, IMovable
     private void OnTeleportAnimationEnd()
     {
         animator.SetBool(isTeleportingHash, false);
+        canMove = true;
     }
 
 
@@ -201,11 +232,34 @@ public class PlayerManager : CharacterBase, IMovable
         return isRunning;
     }
 
+    private IEnumerator TakingDamageRoutine()
+    {
+        isTakingDamage = true;
+        // Define um período de invencibilidade de 0.5 segundos
+        yield return new WaitForSeconds(0.5f); 
+        isTakingDamage = false;
+    }
+
+    public bool PlayerIsTakingDamage()
+    {
+        return isTakingDamage;
+    }
+
     private void UpdatePlayerStats()
     {
         IsGrounded();
         IsJumping();
         IsRunning();
+        canMove = true;
+    }
+
+    private void UpdateAnimations()
+    {
+        animator.SetBool(isJumpingHash, isJumping);
+        animator.SetBool(isGroundedHash, isGrounded);
+        animator.SetBool(isRunningHash, isRunning);
+        animator.SetBool(isTeleportingHash, false);
+        animator.SetBool(isTakingDamageHash, isTakingDamage);
     }
 
     public void PlayerStats()

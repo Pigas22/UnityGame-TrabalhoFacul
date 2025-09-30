@@ -9,9 +9,9 @@ public class CameraManager : UniversalAdditionalCameraData
 
     private static CameraManager instance;
 
-    void Awake()
+    void Start()
     {
-        camLimits = new Vector2(0, 0);
+        actualTarget = GameManagement.PlayerObject;
 
         if (instance == null)
         {
@@ -22,11 +22,6 @@ public class CameraManager : UniversalAdditionalCameraData
         {
             Destroy(gameObject);
         }
-    }
-
-    void Start()
-    {
-        actualTarget = GameManagement.PlayerObject;
     }
 
     void LateUpdate()
@@ -45,7 +40,7 @@ public class CameraManager : UniversalAdditionalCameraData
             transform.position = smoothedPosition;
         }
     }
-    
+
     public CameraManager SetLevelLimits(Vector2 limits)
     {
         camLimits = limits;

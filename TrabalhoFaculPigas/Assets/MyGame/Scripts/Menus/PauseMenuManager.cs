@@ -81,6 +81,8 @@ public class PauseMenuManager : MonoBehaviour
 
     void OnEnable()
     {
+        collectablesInfoText.text = "";
+
         if (pontosTotaisObject == null)
         {
             Debug.LogWarning("pontosTotaisObject não está atribuído!");

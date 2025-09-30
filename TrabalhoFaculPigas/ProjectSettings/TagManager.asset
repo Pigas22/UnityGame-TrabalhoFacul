@@ -8,6 +8,7 @@ TagManager:
   - BackgroundTerrain
   - Walss
   - Enemy
+  - HitBox
   layers:
   - Default
   - TransparentFX
