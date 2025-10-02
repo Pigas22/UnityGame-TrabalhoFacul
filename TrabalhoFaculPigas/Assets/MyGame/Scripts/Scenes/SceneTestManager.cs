@@ -68,7 +68,7 @@ public class SceneTestManager : MonoBehaviour
         {
             pauseMenuManager = GameObject.Find("PauseMenuManager");
         }
-        pauseMenuManager.GetComponent<PauseMenuManager>().gameObject.SetActive(false);
+        pauseMenuManager.GetComponent<PauseMenuManager>().ResumeGame();
 
         if (playerSpawnPoint == null) playerSpawnPoint = GameObject.Find("PlayerSpawnPoint").transform;
     }

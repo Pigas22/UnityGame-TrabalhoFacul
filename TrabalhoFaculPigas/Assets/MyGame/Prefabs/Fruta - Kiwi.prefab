@@ -143,6 +143,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::KiwiFruit
   scoreValue: 1
   collectibleName: Collectible
+  animator: {fileID: 6652099314741108433}
 --- !u!95 &6652099314741108433
 Animator:
   serializedVersion: 7

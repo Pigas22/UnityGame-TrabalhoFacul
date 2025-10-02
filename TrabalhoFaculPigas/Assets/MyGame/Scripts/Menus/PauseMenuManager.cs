@@ -16,23 +16,26 @@ public class PauseMenuManager : MonoBehaviour
 
     void Awake()
     {
-        if (sceneManager == null)
-        {
-            sceneManager = GameObject.Find("SceneManager").GetComponent<SceneTestManager>();
-        }
-        else sceneManager = GetComponent<SceneTestManager>();
+        // if (sceneManager == null)
+        // {
+        //     sceneManager = GameObject.Find("SceneManager").GetComponent<SceneTestManager>();
+        // }
+        // else sceneManager = GetComponent<SceneTestManager>();
 
-        if (canvasPauseMenu == null)
-        {
-            canvasPauseMenu = GameObject.Find("CanvasPauseMenu");
-        }
-        else canvasPauseMenu = GetComponent<GameObject>();
+        // if (canvasPauseMenu == null)
+        // {
+        //     canvasPauseMenu = GameObject.Find("CanvasPauseMenu");
+        // }
+        // else canvasPauseMenu = GetComponent<GameObject>();
+
+        sceneManager = sceneManager == null ? GameObject.Find("SceneManager").GetComponent<SceneTestManager>() : sceneManager = GetComponent<SceneTestManager>();
+        canvasPauseMenu = canvasPauseMenu == null ? GameObject.Find("CanvasPauseMenu") : GetComponent<GameObject>();
 
         playerManager = GameManagement.PlayerObject.GetComponent<PlayerManager>();
         pontosTotaisText = pontosTotaisObject.GetComponent<TextMeshProUGUI>();
         collectablesInfoText = collectablesInfoObject.GetComponent<TextMeshProUGUI>();
 
-        canvasPauseMenu.SetActive(false);
+//        canvasPauseMenu.SetActive(false);
     }
 
     public void PauseGame()
@@ -67,16 +70,7 @@ public class PauseMenuManager : MonoBehaviour
     public void LoadMainMenu()
     {
         Debug.Log("Loading main menu...");
-        // Time.timeScale = 1f; // Assegura que o tempo do jogo está normal antes de carregar o menu principal
-        // var sceneManager = FindObjectOfType<SceneTestManager>();
-        // if (sceneManager != null)
-        // {
-        //     sceneManager.LoadMainMenuScene(); // Carrega a cena do menu principal
-        // }
-        // else
-        // {
-        //     Debug.LogError("SceneTestManager not found in the scene.");
-        // }
+        SceneManager.LoadScene("MenuPrincipal");
     }
 
     void OnEnable()
@@ -88,7 +82,7 @@ public class PauseMenuManager : MonoBehaviour
             Debug.LogWarning("pontosTotaisObject não está atribuído!");
             return;
         }
-        
+
         if (pontosTotaisText == null)
         {
             Debug.LogWarning("TextMeshProUGUI não encontrado no pontosTotaisObject!");

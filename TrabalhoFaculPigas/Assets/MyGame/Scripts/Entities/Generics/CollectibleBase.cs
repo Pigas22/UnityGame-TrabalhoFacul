@@ -5,7 +5,9 @@ public abstract class CollectibleBase : MonoBehaviour
 {
     [SerializeField] protected int scoreValue = 1;
     [SerializeField] protected string collectibleName = "Collectible";
-    [SerializeField] protected Animator animator;
+    [SerializeField] protected Animator animator = null;
+    private int collectingHash = Animator.StringToHash("collecting");
+
 
     public void OnCollect(GameObject obj)
     {
@@ -15,5 +17,19 @@ public abstract class CollectibleBase : MonoBehaviour
             entity.AddScore((collectibleName, scoreValue));
             Debug.Log($"{collectibleName} collected! Score +{scoreValue}");
         }
+    }
+
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player"))
+        {
+            OnCollect(collision.gameObject);
+            animator.SetBool(collectingHash, true);
+        }
+    }
+
+    void OnCollectAnimationEnd() {
+        animator.SetBool(collectingHash, false);
+        Destroy(gameObject);   
     }
 }
