@@ -192,7 +192,7 @@ public class PlayerManager : CharacterBase, IMovable
     {
         canMove = false;
         animator.SetBool(isTeleportingHash, true);
-        transform.position = sceneManager.GetComponent<SceneTestManager>().GetPlayerSpawnPoint();
+        transform.position = sceneManager.GetComponent<SceneManagerModel>().GetPlayerSpawnPoint();
     }
 
     private void OnTeleportAnimationEnd()

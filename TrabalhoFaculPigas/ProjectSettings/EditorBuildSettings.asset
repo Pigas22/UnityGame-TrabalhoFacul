@@ -8,6 +8,18 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/MyGame/Scenes/CenaTeste.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/MyGame/Scenes/MenuPrincipal.unity
+    guid: 5813d999e6c7ad6499844a7eb844727e
+  - enabled: 1
+    path: Assets/MyGame/Scenes/PrimeiraFase.unity
+    guid: aa8f2b736bf0c874bb8f14d52da3165c
+  - enabled: 1
+    path: Assets/MyGame/Scenes/SegundaFase.unity
+    guid: 268dfc8440be5704eb04fea550cb36cb
+  - enabled: 1
+    path: Assets/MyGame/Scenes/TerceiraFase.unity
+    guid: 18f3853673cfb84428f05e51d86efb85
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

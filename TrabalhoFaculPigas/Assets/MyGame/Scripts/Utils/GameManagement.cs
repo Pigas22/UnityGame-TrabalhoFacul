@@ -6,14 +6,20 @@ static class GameManagement
 
     private static Camera mainCamera = Camera.main;
 
-    public static GameObject PlayerObject
-    {
-        get { return playerObject; }
-    }
+    public static GameObject PlayerObject { get { return playerObject; } }
 
     public static Camera MainCamera
     {
-        get { return mainCamera; }
+        get
+        {
+            UpdateMainCamera();
+            return mainCamera;
+        }
+    }
+
+    public static void UpdateMainCamera()
+    {
+        mainCamera = Camera.main;
     }
 
     public static Vector3 positionToViewPortPoint(GameObject obj)

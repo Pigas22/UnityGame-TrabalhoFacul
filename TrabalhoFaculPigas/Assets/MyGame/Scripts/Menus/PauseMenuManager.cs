@@ -5,10 +5,9 @@ using UnityEngine.UI;
 
 public class PauseMenuManager : MonoBehaviour
 {
-    [SerializeField] private SceneTestManager sceneManager;
+    [SerializeField] private SceneManagerModel sceneManager;
     [SerializeField] private GameObject canvasPauseMenu;
-
-    private PlayerManager playerManager;
+    [SerializeField] private PlayerManager playerManager;
     public GameObject pontosTotaisObject;
     private TextMeshProUGUI pontosTotaisText;
     public GameObject collectablesInfoObject;
@@ -28,12 +27,14 @@ public class PauseMenuManager : MonoBehaviour
         // }
         // else canvasPauseMenu = GetComponent<GameObject>();
 
-        sceneManager = sceneManager == null ? GameObject.Find("SceneManager").GetComponent<SceneTestManager>() : sceneManager = GetComponent<SceneTestManager>();
+        sceneManager = sceneManager == null ? GameObject.Find("SceneManager").GetComponent<SceneTestManager>() : sceneManager = GetComponent<SceneManagerModel>();
         canvasPauseMenu = canvasPauseMenu == null ? GameObject.Find("CanvasPauseMenu") : GetComponent<GameObject>();
 
-        playerManager = GameManagement.PlayerObject.GetComponent<PlayerManager>();
         pontosTotaisText = pontosTotaisObject.GetComponent<TextMeshProUGUI>();
         collectablesInfoText = collectablesInfoObject.GetComponent<TextMeshProUGUI>();
+
+
+        playerManager = playerManager == null ? GameManagement.PlayerObject.GetComponent<PlayerManager>() : GetComponent<PlayerManager>();
 
 //        canvasPauseMenu.SetActive(false);
     }
@@ -89,6 +90,8 @@ public class PauseMenuManager : MonoBehaviour
             return;
         }
 
+        if (playerManager == null) return;
+        
         if (playerManager.GetTotalScore() >= 0)
         {
             var lista = playerManager.GetCollectedItensInfos();

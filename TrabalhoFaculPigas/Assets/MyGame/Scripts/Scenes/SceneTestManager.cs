@@ -3,16 +3,10 @@ using UnityEngine;
 using UnityEngine.Diagnostics;
 using UnityEngine.SceneManagement;
 
-public class SceneTestManager : MonoBehaviour
+public class SceneTestManager : SceneManagerModel
 {
     [SerializeField] private List<EnemySpawnData> enemiesToSpawn;
-
     [SerializeField] private GameObject playerObject;
-    [SerializeField] private Transform playerSpawnPoint;
-    [SerializeField] private GameObject pauseMenuManager;
-    [SerializeField] private Camera mainCamera;
-    [SerializeField] private Vector2 camLimits = new Vector2(25f, 10f);
-    [SerializeField] private bool isPaused = false;
 
     void Awake()
     {
@@ -54,43 +48,12 @@ public class SceneTestManager : MonoBehaviour
         }
     }
 
-    void ConfigData()
+    new void ConfigData()
     {
-        mainCamera.GetComponent<CameraManager>().SetLevelLimits(camLimits);
+        base.ConfigData();
 
-        if (playerObject == null)
-        {
-            playerObject = GameObject.Find("Player");
-        }
-
-
-        if (pauseMenuManager == null)
-        {
-            pauseMenuManager = GameObject.Find("PauseMenuManager");
-        }
-        pauseMenuManager.GetComponent<PauseMenuManager>().ResumeGame();
-
-        if (playerSpawnPoint == null) playerSpawnPoint = GameObject.Find("PlayerSpawnPoint").transform;
-    }
-
-    public void PauseGame()
-    {
-        pauseMenuManager.GetComponent<PauseMenuManager>().PauseGame();
-    }
-
-    public void ResumeGame()
-    {
-        pauseMenuManager.GetComponent<PauseMenuManager>().ResumeGame();
-    }
-
-    public void RestartCurrentScene()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
-    public Vector3 GetPlayerSpawnPoint()
-    {
-        return playerSpawnPoint.position;
+        if (playerObject == null) playerObject = GameManagement.PlayerObject;
+        if (playerSpawnPoint == null) playerSpawnPoint = GameObject.Find("PlayerSpawnPoint");
     }
 
     public GameObject GetPlayerObject()
