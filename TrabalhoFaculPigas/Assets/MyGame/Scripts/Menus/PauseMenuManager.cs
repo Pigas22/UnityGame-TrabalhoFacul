@@ -12,6 +12,8 @@ public class PauseMenuManager : MonoBehaviour
     private TextMeshProUGUI pontosTotaisText;
     public GameObject collectablesInfoObject;
     private TextMeshProUGUI collectablesInfoText;
+    [SerializeField] private TextMeshProUGUI kiwiCollectableInfoText;
+    [SerializeField] private TextMeshProUGUI orangeCollectableInfoText;
 
     void Awake()
     {
@@ -27,14 +29,14 @@ public class PauseMenuManager : MonoBehaviour
         // }
         // else canvasPauseMenu = GetComponent<GameObject>();
 
-        sceneManager = sceneManager == null ? GameObject.Find("SceneManager").GetComponent<SceneTestManager>() : sceneManager = GetComponent<SceneManagerModel>();
-        canvasPauseMenu = canvasPauseMenu == null ? GameObject.Find("CanvasPauseMenu") : GetComponent<GameObject>();
+        sceneManager = sceneManager == null ? GameObject.Find("SceneManager").GetComponent<SceneManagerModel>() : sceneManager;
+        canvasPauseMenu = canvasPauseMenu == null ? GameObject.Find("CanvasPauseMenu") : canvasPauseMenu;
 
         pontosTotaisText = pontosTotaisObject.GetComponent<TextMeshProUGUI>();
         collectablesInfoText = collectablesInfoObject.GetComponent<TextMeshProUGUI>();
 
 
-        playerManager = playerManager == null ? GameManagement.PlayerObject.GetComponent<PlayerManager>() : GetComponent<PlayerManager>();
+        playerManager = playerManager == null ? GameManagement.PlayerObject.GetComponent<PlayerManager>() : playerManager;
 
 //        canvasPauseMenu.SetActive(false);
     }
@@ -101,7 +103,16 @@ public class PauseMenuManager : MonoBehaviour
                 Debug.Log("Primeiro item : " + playerManager.GetCollectedItensInfos()[0].ToString());
                 foreach (CollectedItensInfo item in lista)
                 {
-                    collectablesInfoText.text += item.ToString() + "\n";
+                    if (item.NameItem == "Kiwi")
+                    {
+                        kiwiCollectableInfoText.text = item.Qtd + " X " + item.Value + " = " + (item.Qtd * item.Value);
+                    }
+                    else if (item.NameItem == "Orange")
+                    {
+                        orangeCollectableInfoText.text = item.Qtd + " X " + item.Value + " = " + (item.Qtd * item.Value);
+                    }
+
+                    // collectablesInfoText.text += item.ToString() + "\n";
                 }
             }
             else

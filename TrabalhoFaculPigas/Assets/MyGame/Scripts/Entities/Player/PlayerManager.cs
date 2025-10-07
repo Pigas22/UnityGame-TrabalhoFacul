@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 
 public class PlayerManager : CharacterBase, IMovable
@@ -17,11 +18,13 @@ public class PlayerManager : CharacterBase, IMovable
     [SerializeField] private bool isTakingDamage = false;
     [SerializeField] private bool canMove = true;
 
+    [SerializeField] private GameObject chaoPallete;
+    [SerializeField] private float disableTime = 0.7f; // tempo que a colisão fica desativada
     private Rigidbody2D playerRB;
     private SpriteRenderer playerSR;
     private CapsuleCollider2D playerCC;
     private GameObject sceneManager;
-
+    private Vector3 spawnpoint;
 
     private Animator animator;
     private int isRunningHash = Animator.StringToHash("isRunning");
@@ -43,27 +46,31 @@ public class PlayerManager : CharacterBase, IMovable
         playerFootHitBox.transform.localPosition = new Vector3(0, -0.149f, 0); // Centraliza a hitbox no jogador
 
         lives = 6;
-        UpdatePlayerStats();
-
-        sceneManager = GameObject.Find("SceneManager");
-        // transform.position = sceneManager.GetComponent<SceneTestManager>().GetPlayerSpawnPoint();
-        TeleportToSpawn();
 
         playerRB = GetComponent<Rigidbody2D>();
         playerSR = GetComponent<SpriteRenderer>();
         playerCC = GetComponent<CapsuleCollider2D>();
 
+        chaoPallete = chaoPallete == null ? GameObject.Find("ChaoPallete") : chaoPallete;
+
+        sceneManager = GameObject.Find("SceneManager");
+        spawnpoint = sceneManager.GetComponent<SceneManagerModel>().GetPlayerSpawnPoint();
+        // transform.position = sceneManager.GetComponent<SceneTestManager>().GetPlayerSpawnPoint();
+
+        UpdatePlayerStats();
+        TeleportToSpawn();
     }
 
     // Update is called once per frame
     void Update()
     {
-        UpdatePlayerStats();
+
         // playerStats();
 
         if (isAlive)
         {
             Walk();
+            Crouch();
             Jump();
         }
         else
@@ -76,6 +83,9 @@ public class PlayerManager : CharacterBase, IMovable
 
     void LateUpdate()
     {
+        UpdatePlayerStats();
+        UpdateAnimations();
+
         if (isAlive)
         {
             OutOfCam();
@@ -86,12 +96,7 @@ public class PlayerManager : CharacterBase, IMovable
             playerRB.linearVelocityX = 0;
             playerRB.linearVelocityY = 0;
 
-            isJumping = false;
-            isRunning = false;
             isGrounded = false;
-
-            UpdatePlayerStats();
-            UpdateAnimations();
         }
     }
 
@@ -117,18 +122,25 @@ public class PlayerManager : CharacterBase, IMovable
         animator.SetBool(isRunningHash, isRunning);
     }
 
+    public void Crouch()
+    {
+        if (canMove &&
+                    (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)))
+        {
+            Debug.Log("Agachando");
+            StartCoroutine(DisableCollisionTemporarily());
+        }
+    }
+
     public void Jump()
     {
-        if (Input.GetButtonDown("Jump")
-                            // && Mathf.Abs(playerRB.linearVelocityY) < 0.001f
-                            && isGrounded && canMove)
+        if (Input.GetButtonDown("Jump") && isGrounded && canMove)
         {
             playerRB.linearVelocityY = jumpForce;
-            UpdatePlayerStats();
+            animator.SetBool(isGroundedHash, isGrounded);
+            animator.SetBool(isJumpingHash, isJumping);
         }
 
-        animator.SetBool(isJumpingHash, isJumping);
-        animator.SetBool(isGroundedHash, isGrounded);
     }
 
     // private bool canTeleport(Vector3 targetPosition)
@@ -173,26 +185,43 @@ public class PlayerManager : CharacterBase, IMovable
         canMove = false;
         isTakingDamage = true;
 
-        StartCoroutine(TakingDamageRoutine());
-
         animator.SetBool(isTakingDamageHash, isTakingDamage);
-        playerRB.linearVelocityY = jumpForce * 2;
+
+        playerRB.linearVelocityY = jumpForce * 0.5f;
         playerRB.linearVelocityX = 1;
-        base.TakeDamage(amount);
+
+        base.TakeDamage(amount);        
     }
 
-    void OnDamageAnimationEnd()
+    private IEnumerator TakingDamageRoutine()
     {
+        canMove = false;
+        // Define um período de invencibilidade de 0.5 segundos
+        yield return new WaitForSeconds(0.5f);
+
+        canMove = true;
+    }
+
+    public void OnDamageAnimationEnd()
+    {
+        Debug.Log("Passou por aqui");
         isTakingDamage = false;
         animator.SetBool(isTakingDamageHash, isTakingDamage);
+        StartCoroutine(TakingDamageRoutine());
         TeleportToSpawn();
     }
 
     void TeleportToSpawn()
     {
+        Debug.Log("Teleporantando para o spawn");
+
+        playerRB.linearVelocityX = 0;
+        playerRB.linearVelocityY = 0;
+
         canMove = false;
         animator.SetBool(isTeleportingHash, true);
-        transform.position = sceneManager.GetComponent<SceneManagerModel>().GetPlayerSpawnPoint();
+        Debug.Log(sceneManager.GetComponent<SceneManagerModel>().GetPlayerSpawnPoint());
+        transform.position = spawnpoint;
     }
 
     private void OnTeleportAnimationEnd()
@@ -204,9 +233,15 @@ public class PlayerManager : CharacterBase, IMovable
 
     private void IsGrounded()
     {
-        // Detectar a layer Ground com a Tag Chao
-        // isGrounded = Physics2D.Raycast(playerCC.bounds.center, Vector2.down, playerCC.bounds.extents.y + 0.1f, LayerMask.GetMask("Ground"));
-        isGrounded = playerFootHitBox.GetComponent<PlayerHitBox>().colidindoComChao || playerFootHitBox.GetComponent<PlayerHitBox>().colidindoComInimigo;
+        if (playerFootHitBox.GetComponent<PlayerHitBox>().colidindoComChao
+                            || playerFootHitBox.GetComponent<PlayerHitBox>().colidindoComInimigo)
+        {
+            isGrounded = true;
+        }
+        else
+        {
+            isGrounded = false;
+        }
     }
     public bool PlayerIsGrounded()
     {
@@ -216,7 +251,14 @@ public class PlayerManager : CharacterBase, IMovable
     private void IsJumping()
     {
         // Debug.Log("Jogador está pulando ? " + isJumping);
-        isJumping = !isGrounded;
+        if (!isGrounded && Mathf.Abs(playerRB.linearVelocityY) > 0.001f)
+        {
+            isJumping = true;
+        }
+        else
+        {
+            isJumping = false;
+        }
     }
     public bool PlayerIsJumping()
     {
@@ -232,14 +274,6 @@ public class PlayerManager : CharacterBase, IMovable
         return isRunning;
     }
 
-    private IEnumerator TakingDamageRoutine()
-    {
-        isTakingDamage = true;
-        // Define um período de invencibilidade de 0.5 segundos
-        yield return new WaitForSeconds(0.5f); 
-        isTakingDamage = false;
-    }
-
     public bool PlayerIsTakingDamage()
     {
         return isTakingDamage;
@@ -248,9 +282,9 @@ public class PlayerManager : CharacterBase, IMovable
     private void UpdatePlayerStats()
     {
         IsGrounded();
-        IsJumping();
         IsRunning();
-        canMove = true;
+        IsJumping();
+        if (!isTakingDamage) canMove = true;
     }
 
     private void UpdateAnimations()
@@ -298,5 +332,14 @@ public class PlayerManager : CharacterBase, IMovable
     public List<CollectedItensInfo> GetCollectedItensInfos()
     {
         return this.collectedItensInfos;
+    }
+    
+    private System.Collections.IEnumerator DisableCollisionTemporarily()
+    {
+        chaoPallete.GetComponent<TilemapCollider2D>().enabled = false;
+
+        yield return new WaitForSeconds(disableTime);
+
+        chaoPallete.GetComponent<TilemapCollider2D>().enabled = true;
     }
 }

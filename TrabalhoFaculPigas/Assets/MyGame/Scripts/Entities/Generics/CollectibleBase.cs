@@ -25,6 +25,8 @@ public abstract class CollectibleBase : MonoBehaviour
         {
             OnCollect(collision.gameObject);
             animator.SetBool(collectingHash, true);
+
+            gameObject.GetComponent<CircleCollider2D>().enabled = false;
         }
     }
 

@@ -6,7 +6,11 @@ static class GameManagement
 
     private static Camera mainCamera = Camera.main;
 
-    public static GameObject PlayerObject { get { return playerObject; } }
+    public static GameObject PlayerObject
+    {
+        get { return playerObject; }
+        set { playerObject = value; }
+    }
 
     public static Camera MainCamera
     {
@@ -24,11 +28,13 @@ static class GameManagement
 
     public static Vector3 positionToViewPortPoint(GameObject obj)
     {
+        UpdateMainCamera();
         return mainCamera.WorldToViewportPoint(obj.transform.position);
     }
 
     public static Vector3 viewPortPointToPosition(Vector3 viewPortPoint)
     {
+        UpdateMainCamera();
         return mainCamera.ViewportToWorldPoint(viewPortPoint);
     }
 
@@ -45,8 +51,15 @@ static class GameManagement
         return viewportPoint.y < 0 || viewportPoint.y > 1;
     }
 
+    public static bool OutOfYDownAxe(GameObject obj)
+    {
+        Vector3 viewportPoint = positionToViewPortPoint(obj);
+        return viewportPoint.y < 0;
+    }
+
     public static bool OutOfCam(GameObject obj)
     {
-        return OutOfXAxe(obj) || OutOfYAxe(obj);
+        if (obj == playerObject) return OutOfXAxe(obj) || OutOfYDownAxe(obj);
+        else return OutOfXAxe(obj) || OutOfYAxe(obj);
     }
 }

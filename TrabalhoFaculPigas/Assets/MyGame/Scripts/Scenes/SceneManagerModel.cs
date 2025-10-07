@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Diagnostics;
 using UnityEngine.SceneManagement;
+using UnityEngine.Tilemaps;
 
 public class SceneManagerModel : MonoBehaviour
 {
@@ -12,18 +13,18 @@ public class SceneManagerModel : MonoBehaviour
     [SerializeField] protected bool isPaused = false;
     [SerializeField] protected GameObject playerSpawnPoint;
 
+
     void Awake()
     {
+        GameManagement.PlayerObject = GameObject.Find("Player");
         if (mainCamera == null)
         {
             mainCamera = GameManagement.MainCamera;
         }
 
-        DontDestroyOnLoad(mainCamera.gameObject);
-
         if (playerSpawnPoint == null)
         {
-            playerSpawnPoint = new GameObject(name = "PlayerSpawnPoint");
+            playerSpawnPoint = GameObject.Find("PlayerSpawnPoint");
         }
 
         ConfigData();
@@ -54,10 +55,10 @@ public class SceneManagerModel : MonoBehaviour
     {
         mainCamera.GetComponent<CameraManager>().SetLevelLimits(camLimits);
 
-        if (pauseMenuManager == null) 
-            {
-                pauseMenuManager = GameObject.Find("PauseMenuManager");
-            }
+        if (pauseMenuManager == null)
+        {
+            pauseMenuManager = GameObject.Find("PauseMenuManager");
+        }
         pauseMenuManager.GetComponent<PauseMenuManager>().ResumeGame();
     }
 
@@ -79,5 +80,6 @@ public class SceneManagerModel : MonoBehaviour
     public void RestartCurrentScene()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        mainCamera = GameManagement.MainCamera;
     }
 }

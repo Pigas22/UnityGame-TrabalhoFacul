@@ -9,6 +9,7 @@ TagManager:
   - Walss
   - Enemy
   - HitBox
+  - SecondChao
   layers:
   - Default
   - TransparentFX

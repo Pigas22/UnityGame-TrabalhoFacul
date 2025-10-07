@@ -11,12 +11,12 @@ public class CameraManager : UniversalAdditionalCameraData
 
     void Start()
     {
-        actualTarget = GameManagement.PlayerObject;
+        actualTarget = actualTarget == null ? GameManagement.PlayerObject : actualTarget;
 
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject);
+           //  DontDestroyOnLoad(gameObject);
         }
         else
         {

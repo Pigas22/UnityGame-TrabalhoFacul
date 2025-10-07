@@ -14,7 +14,6 @@ public class SceneTestManager : SceneManagerModel
         {
             mainCamera = GameManagement.MainCamera;
         }
-        DontDestroyOnLoad(mainCamera.gameObject);
 
         ConfigData();
 

@@ -243,10 +243,11 @@ MonoBehaviour:
   jumpForce: 6
   collectedItensInfos: []
   totalScore: 0
-  playerFootHitBox: {fileID: 0}
+  playerFootHitBox: {fileID: 3362828480007571485}
   isGrounded: 0
   isJumping: 1
   isRunning: 0
+  isTakingDamage: 0
   canMove: 1
 --- !u!50 &7768189874081316561
 Rigidbody2D:
