@@ -286,16 +286,24 @@ public class MenuPrincipalManager : MonoBehaviour
         DeActivatePanelSubMenus();
     }
 
+    // Open devs github links
+    public void OpenGithubLink(string url) {
+        DebugIsOpenMenu("LinkGitHub", true);
+        Application.OpenURL(url);
+    }
+
+
     // Info Menu (Abrir GitHub do projeto)
-    public void OpenLinkInfo() {
-        DebugIsOpenMenu(new GameObject(name = "LinkGitHub"), true);
-        Application.OpenURL("https://github.com/Pigas22/UnityGame-TrabalhoFacul"); 
+    public void OpenLinkInfo()
+    {
+        DebugIsOpenMenu("LinkGitHub", true);
+        Application.OpenURL("https://github.com/Pigas22/UnityGame-TrabalhoFacul");
     }
 
     // Sair
     public void Quit()
     {
-        DebugIsOpenMenu(new GameObject(name = "Application"), false);
+        DebugIsOpenMenu("Application", false);
         Application.Quit();
     }
 
