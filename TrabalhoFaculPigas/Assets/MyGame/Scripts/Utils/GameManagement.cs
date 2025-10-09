@@ -62,4 +62,17 @@ static class GameManagement
         if (obj == playerObject) return OutOfXAxe(obj) || OutOfYDownAxe(obj);
         else return OutOfXAxe(obj) || OutOfYAxe(obj);
     }
+
+    
+    // Mostra no console qual objeto está abrindo ou fechando
+    public static void DebugIsOpenMenu(string name, bool isOpenning)
+    {
+        if (isOpenning) Debug.Log("Abrindo: " + name);
+        else Debug.Log("Fechando: " + name);
+    }
+    public static void DebugIsOpenMenu(GameObject obj, bool isOpenning)
+    {
+        if (isOpenning) Debug.Log("Abrindo: " + obj.name);
+        else Debug.Log("Fechando: " + obj.name);
+    }
 }

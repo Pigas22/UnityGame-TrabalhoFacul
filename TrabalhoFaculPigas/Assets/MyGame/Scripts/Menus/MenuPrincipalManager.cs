@@ -24,7 +24,7 @@ public class MenuPrincipalManager : MonoBehaviour
     // Jogar
     public void OpenLevelSelectorMenu()
     {
-        DebugIsOpenMenu(seletorNiveisPanel, false);
+        GameManagement.DebugIsOpenMenu(seletorNiveisPanel, false);
         ActivatePanelSubMenus();
         seletorNiveisPanel.SetActive(true);
         UpdateLevelPlayButton();
@@ -224,7 +224,7 @@ public class MenuPrincipalManager : MonoBehaviour
     public void Jogar() { SceneManager.LoadScene(niveisDoJogo[indexFaseAtual].name); }
     public void CloseLevelSelectorMenu()
     { 
-        DebugIsOpenMenu(seletorNiveisPanel, false);
+        GameManagement.DebugIsOpenMenu(seletorNiveisPanel, false);
         seletorNiveisPanel.SetActive(false);
         DeActivatePanelSubMenus();
     }
@@ -238,7 +238,7 @@ public class MenuPrincipalManager : MonoBehaviour
     // Skin Changer Menu
     public void OpenSkinChangerMenu()
     {
-        DebugIsOpenMenu(alterarSkinPanel, false);
+        GameManagement.DebugIsOpenMenu(alterarSkinPanel, false);
         ActivatePanelSubMenus();
         alterarSkinPanel.SetActive(true);
     }
@@ -246,7 +246,7 @@ public class MenuPrincipalManager : MonoBehaviour
     public void NextSkin() { }
     public void CloseSkinChangerMenu()
     {
-        DebugIsOpenMenu(alterarSkinPanel, false);
+        GameManagement.DebugIsOpenMenu(alterarSkinPanel, false);
         alterarSkinPanel.SetActive(false);
         DeActivatePanelSubMenus();
     }
@@ -254,7 +254,7 @@ public class MenuPrincipalManager : MonoBehaviour
     // Settings Menu
     public void OpenSettingsMenu()
     {
-        DebugIsOpenMenu(configPanel, true);
+        GameManagement.DebugIsOpenMenu(configPanel, true);
         ActivatePanelSubMenus();
         configPanel.SetActive(true);
     }
@@ -266,7 +266,7 @@ public class MenuPrincipalManager : MonoBehaviour
     }
     public void CloseSettingsMenu()
     {
-        DebugIsOpenMenu(configPanel, false);
+        GameManagement.DebugIsOpenMenu(configPanel, false);
         configPanel.SetActive(false);
         DeActivatePanelSubMenus();
     }
@@ -275,20 +275,20 @@ public class MenuPrincipalManager : MonoBehaviour
     public void OpenCreditsMenu()
     {
         FecharTodosMenus();
-        DebugIsOpenMenu(creditsPanel, true);
+        GameManagement.DebugIsOpenMenu(creditsPanel, true);
         ActivatePanelSubMenus();
         creditsPanel.SetActive(true);
     }
     public void CloseCreditsMenu()
     {
-        DebugIsOpenMenu(creditsPanel, false);
+        GameManagement.DebugIsOpenMenu(creditsPanel, false);
         creditsPanel.SetActive(false);
         DeActivatePanelSubMenus();
     }
 
     // Open devs github links
     public void OpenGithubLink(string url) {
-        DebugIsOpenMenu("LinkGitHub", true);
+        GameManagement.DebugIsOpenMenu("LinkGitHub", true);
         Application.OpenURL(url);
     }
 
@@ -296,21 +296,21 @@ public class MenuPrincipalManager : MonoBehaviour
     // Info Menu (Abrir GitHub do projeto)
     public void OpenLinkInfo()
     {
-        DebugIsOpenMenu("LinkGitHub", true);
+        GameManagement.DebugIsOpenMenu("LinkGitHub", true);
         Application.OpenURL("https://github.com/Pigas22/UnityGame-TrabalhoFacul");
     }
 
     // Sair
     public void Quit()
     {
-        DebugIsOpenMenu("Application", false);
+        GameManagement.DebugIsOpenMenu("Application", false);
         Application.Quit();
     }
 
 
     private void FecharTodosMenus()
     {
-        DebugIsOpenMenu("Todos", false);
+        GameManagement.DebugIsOpenMenu("Todos", false);
         panelSubMenus.SetActive(false);
         seletorNiveisPanel.SetActive(false);
         alterarSkinPanel.SetActive(false);
@@ -326,17 +326,5 @@ public class MenuPrincipalManager : MonoBehaviour
     private void DeActivatePanelSubMenus()
     {
         panelSubMenus.SetActive(false);
-    }
-
-    // Mostra no console qual objeto está abrindo ou fechando
-    private void DebugIsOpenMenu(string name, bool isOpenning)
-    {
-        if (isOpenning) Debug.Log("Abrindo: " + name);
-        else Debug.Log("Fechando: " + name);
-    }
-    private void DebugIsOpenMenu(GameObject obj, bool isOpenning)
-    {
-        if (isOpenning) Debug.Log("Abrindo: " + obj.name);
-        else Debug.Log("Fechando: " + obj.name);
     }
 }

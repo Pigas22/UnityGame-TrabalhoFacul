@@ -14,6 +14,8 @@ public class PauseMenuManager : MonoBehaviour
     private TextMeshProUGUI collectablesInfoText;
     [SerializeField] private TextMeshProUGUI kiwiCollectableInfoText;
     [SerializeField] private TextMeshProUGUI orangeCollectableInfoText;
+    [SerializeField] private GameObject panelConfigBackground;
+    [SerializeField] private GameObject configPanel;
 
     void Awake()
     {
@@ -35,10 +37,14 @@ public class PauseMenuManager : MonoBehaviour
         pontosTotaisText = pontosTotaisObject.GetComponent<TextMeshProUGUI>();
         collectablesInfoText = collectablesInfoObject.GetComponent<TextMeshProUGUI>();
 
+        panelConfigBackground = panelConfigBackground == null ? GameObject.Find("PanelConfigBackground") : panelConfigBackground;
+        configPanel = configPanel == null ? GameObject.Find("ConfigPanel") : configPanel;
 
         playerManager = playerManager == null ? GameManagement.PlayerObject.GetComponent<PlayerManager>() : playerManager;
 
-//        canvasPauseMenu.SetActive(false);
+        canvasPauseMenu.SetActive(false);
+        panelConfigBackground.SetActive(false);
+        configPanel.SetActive(false);
     }
 
     public void PauseGame()
@@ -47,18 +53,32 @@ public class PauseMenuManager : MonoBehaviour
         canvasPauseMenu.SetActive(true); // Ativa o menu de pausa
         OnEnable();
     }
-
-
     public void ResumeGame()
     {
         Time.timeScale = 1f; // Retoma o tempo do jogo
         canvasPauseMenu.SetActive(false); // Desativa o menu de pausa
+
+        panelConfigBackground.SetActive(false);
+        configPanel.SetActive(false);
     }
 
-    public void OpenSettings()
+    public void OpenSettingsMenu()
     {
-        Debug.Log("Settings menu opened.");
-        // Implement settings menu logic here
+        GameManagement.DebugIsOpenMenu(configPanel, true);
+        panelConfigBackground.SetActive(true);
+        configPanel.SetActive(true);
+    }
+    public void SaveSettings()
+    {
+        Debug.Log("Salvando Alterações");
+
+        CloseSettingsMenu();
+    }
+    public void CloseSettingsMenu()
+    {
+        GameManagement.DebugIsOpenMenu(configPanel, false);
+        panelConfigBackground.SetActive(false);
+        configPanel.SetActive(false);
     }
 
 
@@ -72,6 +92,7 @@ public class PauseMenuManager : MonoBehaviour
 
     public void LoadMainMenu()
     {
+        Time.timeScale = 1f; // Retoma o tempo do jogo
         Debug.Log("Loading main menu...");
         SceneManager.LoadScene("MenuPrincipal");
     }

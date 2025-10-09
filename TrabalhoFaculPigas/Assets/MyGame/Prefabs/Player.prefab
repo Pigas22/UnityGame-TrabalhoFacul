@@ -93,6 +93,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   colidindoComInimigo: 0
   colidindoComChao: 0
+  sceneManager: {fileID: 0}
 --- !u!1 &9164280881693813160
 GameObject:
   m_ObjectHideFlags: 0
@@ -249,6 +250,8 @@ MonoBehaviour:
   isRunning: 0
   isTakingDamage: 0
   canMove: 1
+  chaoPallete: {fileID: 0}
+  disableTime: 1
 --- !u!50 &7768189874081316561
 Rigidbody2D:
   serializedVersion: 5
