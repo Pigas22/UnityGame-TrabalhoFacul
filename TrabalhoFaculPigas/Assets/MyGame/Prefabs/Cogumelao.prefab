@@ -437,7 +437,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6060ba5826ea7745a271540ae2899a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyManager
-  lives: 1
+  maxHealth: 2
+  currentHealth: 2
   isAlive: 1
   damageToPlayer: 1
   enemyHitBox: {fileID: 7514035634292152723}

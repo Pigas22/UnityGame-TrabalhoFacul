@@ -37,11 +37,10 @@ public class EnemyBase : CharacterBase, IMovable
     {
         StartCoroutine(AlreadySpawnedCoroutine());
 
-        if (isAlive)
+        if (IsAlive())
         {
             if (!alreadySpawned && !IsGrounded() && IsFalling())
             {
-                base.lives = 0;
                 Die();
                 Destroy(gameObject);
             }
@@ -49,10 +48,6 @@ public class EnemyBase : CharacterBase, IMovable
             {
                 Walk();
             }
-        }
-        else
-        {
-            Die();
         }
     }
 
@@ -141,6 +136,7 @@ public class EnemyBase : CharacterBase, IMovable
     protected void OnDamageAnimationEnd()
     {
         animator.SetBool(takingDamageHash, false);
+        Die();
     }
 
     public int GetDamageValue()

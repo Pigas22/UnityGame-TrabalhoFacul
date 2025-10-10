@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -7,9 +8,10 @@ using UnityEngine.Tilemaps;
 
 
 public class PlayerManager : CharacterBase, IMovable
-{
+{ 
     [SerializeField] private float playerSpeed = 5f;
     [SerializeField] private float jumpForce = 6f;
+    
     [SerializeField] private List<CollectedItensInfo> collectedItensInfos = new List<CollectedItensInfo>();
     [SerializeField] private int totalScore = 0;
     [SerializeField] private GameObject playerFootHitBox;
@@ -26,6 +28,7 @@ public class PlayerManager : CharacterBase, IMovable
     private GameObject sceneManager;
     private Vector3 spawnpoint;
 
+    public Action<int, bool> OnHealthChanged;
     private Animator animator;
     private int isRunningHash = Animator.StringToHash("isRunning");
     private int isJumpingHash = Animator.StringToHash("isJumping");
@@ -36,6 +39,7 @@ public class PlayerManager : CharacterBase, IMovable
 
     void Awake()
     {
+        InitConfigHPChar(6);
         animator = GetComponent<Animator>();
     }
 
@@ -45,8 +49,6 @@ public class PlayerManager : CharacterBase, IMovable
         playerFootHitBox = GameObject.Find("PlayerFootHitBox");
         playerFootHitBox.transform.SetParent(this.transform); // Torna a hitbox filha do jogador
         playerFootHitBox.transform.localPosition = new Vector3(0, -0.149f, 0); // Centraliza a hitbox no jogador
-
-        lives = 6;
 
         playerRB = GetComponent<Rigidbody2D>();
         playerSR = GetComponent<SpriteRenderer>();
@@ -65,7 +67,7 @@ public class PlayerManager : CharacterBase, IMovable
     {
         // playerStats();
 
-        if (isAlive)
+        if (IsAlive())
         {
             if (isTakingDamage) return;
             Walk();
@@ -117,7 +119,14 @@ public class PlayerManager : CharacterBase, IMovable
                     (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)))
         {
             Debug.Log("Agachando");
-            StartCoroutine(DisableCollisionTemporarily());
+
+            GameObject groundObject = GameObject.FindGameObjectWithTag("Chao");
+            TilemapCollider2D groundCollider = groundObject?.GetComponent<TilemapCollider2D>();
+
+            if (groundCollider != null)
+            {
+                StartCoroutine(DisableCollisionTemporarily(groundCollider));
+            }
         }
     }
 
@@ -148,32 +157,28 @@ public class PlayerManager : CharacterBase, IMovable
         canDoubleJump = false;
     }
 
-    private bool OutOfCam()
-    {
-        return GameManagement.OutOfCam(gameObject);
-    }
+    private bool OutOfCam() { return GameManagement.OutOfCam(gameObject); }
 
     public override void TakeDamage(int amount)
     {
-        canMove = false;
-        isTakingDamage = true;
-        isJumping = false;
-        isRunning = false;
+        if (isTakingDamage) return;
 
-        UpdateAnimations();
 
-        // Calcula o lado do dano
-        float direction = playerSR.flipX ? 1f : -1f;
-
-        // Aplica o "empurrão" para o lado oposto e um leve impulso para cima
-        playerRB.linearVelocityX = direction * (playerSpeed * 0.5f);
-
-        playerRB.linearVelocityY = jumpForce * 0.5f;
-
-        base.TakeDamage(amount);      
-
-        if (isAlive)
+        if (base.IsAlive())
         {
+            canMove = false;
+            isTakingDamage = true;
+            isJumping = false;
+            isRunning = false;
+            UpdateAnimations();
+
+            // Aplica o "empurrão"
+            float direction = playerSR.flipX ? 1f : -1f;
+            playerRB.linearVelocityX = direction * (playerSpeed * 0.5f);
+            playerRB.linearVelocityY = jumpForce * 0.5f;
+
+            base.TakeDamage(amount);
+        
             StartCoroutine(TakingDamageRoutine());
         }
     }
@@ -192,6 +197,7 @@ public class PlayerManager : CharacterBase, IMovable
         isTakingDamage = false;
         animator.SetBool(isTakingDamageHash, isTakingDamage);
 
+        OnHealthChanged?.Invoke(currentHealth, IsAlive());
         Die();
 
         if (OutOfCam()) TeleportToSpawn();
@@ -265,11 +271,6 @@ public class PlayerManager : CharacterBase, IMovable
         return isTakingDamage;
     }
 
-    public bool PlayerIsAlive()
-    {
-        return isAlive;
-    }
-
     private void UpdatePlayerStats()
     {
         IsGrounded();
@@ -289,12 +290,11 @@ public class PlayerManager : CharacterBase, IMovable
 
     public void PlayerStats()
     {
-        Debug.Log("Player Lives: " + lives);
+        base.CharacterStats();
         Debug.Log("Player isGrounded: " + isGrounded);
         Debug.Log("Player isJumping: " + isJumping);
         Debug.Log("Player Velocity X: " + playerRB.linearVelocityX);
         Debug.Log("Player Velocity Y: " + playerRB.linearVelocityY);
-        Debug.Log("Player Position: " + transform.position);
     }
 
     public void AddScore((string name, int value) collectibleInfo)
@@ -325,12 +325,14 @@ public class PlayerManager : CharacterBase, IMovable
         return this.collectedItensInfos;
     }
     
-    private System.Collections.IEnumerator DisableCollisionTemporarily()
+    private IEnumerator DisableCollisionTemporarily(TilemapCollider2D groundCollider)
     {
-        playerCC.enabled = false;
+        // playerCC.enabled = false;
+        Physics2D.IgnoreCollision(playerCC, groundCollider, true);
 
         yield return new WaitForSeconds(disableTime);
 
-        playerCC.enabled = true;
+        // playerCC.enabled = true;
+        Physics2D.IgnoreCollision(playerCC, groundCollider, false);
     }
 }
