@@ -3,6 +3,7 @@ using Unity.VisualScripting;
 using UnityEditor.SceneManagement;
 using System.Collections;
 using UnityEngine;
+using NUnit.Framework;
 
 public class EnemyBase : CharacterBase, IMovable
 {
@@ -10,10 +11,13 @@ public class EnemyBase : CharacterBase, IMovable
     [SerializeField] protected GameObject enemyHitBox;
     [SerializeField] protected GameObject enemyFootHitBox;
     [SerializeField] protected float baseScaleX = 0.8f;
+    [SerializeField] protected bool alreadySpawned = true;
+    [SerializeField] protected bool isGrounded;
+    [SerializeField] protected bool isFalling;
     [SerializeField] protected float enemySpeed = 0.15f;
     [SerializeField] protected int direction = 1; // 1 = direita, -1 = esquerda
-    protected float maxTime = 2.5f;
-    protected float minTime = 1f;
+    protected float maxTime = 5f;
+    protected float minTime = 2.5f;
     protected float changeTime;
     protected Rigidbody2D enemyRB;
     protected SpriteRenderer enemySR;
@@ -23,14 +27,28 @@ public class EnemyBase : CharacterBase, IMovable
     protected int takingDamageHash = Animator.StringToHash("takingDamage");
     protected int isRunningHash = Animator.StringToHash("isRunning");
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Awake()
+    {
+        alreadySpawned = true;
+    }
 
     // Update is called once per frame
     void Update()
     {
+        StartCoroutine(AlreadySpawnedCoroutine());
+
         if (isAlive)
         {
-            Walk();
+            if (!alreadySpawned && !IsGrounded() && IsFalling())
+            {
+                base.lives = 0;
+                Die();
+                Destroy(gameObject);
+            }
+            else
+            {
+                Walk();
+            }
         }
         else
         {
@@ -41,30 +59,42 @@ public class EnemyBase : CharacterBase, IMovable
     void LateUpdate()
     {
         IsRunning();
-        OutOfCam();
+        //OutOfCam();
     }
 
     public void Walk()
     {
-        if (!IsGrounded()
-                    || (Time.time >= changeTime && IsGrounded())) 
+        if (alreadySpawned && !IsGrounded()) { return; }
+        else
         {
-            SetRandomDirection();
+            if (!IsGrounded()
+                        || (Time.time >= changeTime && IsGrounded()))
+            {
+                SetRandomDirection();
+            }
+
+            animator.SetBool(isRunningHash, true);
+
+            // --- Transição suave ao virar ---
+            Vector3 scale = transform.localScale;
+
+            float targetX = direction < 0 ? baseScaleX : -baseScaleX; // define o lado
+
+            scale.x = Mathf.Lerp(scale.x, targetX, Time.deltaTime * 25f); // suaviza a mudança
+            transform.localScale = scale;
+            // -------------------------------
+
+            // mover o bot na direção atual
+            transform.Translate(Vector2.right * direction * enemySpeed * Time.deltaTime);
         }
+    }
 
-        animator.SetBool(isRunningHash, true);
+    private IEnumerator AlreadySpawnedCoroutine()
+    {
+        // Define um período de invencibilidade de 3 segundos
+        yield return new WaitForSeconds(5f);
 
-        // --- Transição suave ao virar ---
-        Vector3 scale = transform.localScale;
-
-        float targetX = direction < 0 ? baseScaleX : -baseScaleX; // define o lado
-
-        scale.x = Mathf.Lerp(scale.x, targetX, Time.deltaTime * 25f); // suaviza a mudança
-        transform.localScale = scale;
-        // -------------------------------
-
-        // mover o bot na direção atual
-        transform.Translate(Vector2.right * direction * enemySpeed * Time.deltaTime);
+        alreadySpawned = false;
     }
 
     protected void SetRandomDirection()
@@ -77,7 +107,14 @@ public class EnemyBase : CharacterBase, IMovable
     }
 
     public bool IsGrounded() {
-        return enemyFootHitBox.GetComponent<EnemyFootHitBox>().colidindoComChao;
+        isGrounded = enemyFootHitBox.GetComponent<EnemyFootHitBox>().colidindoComChao;
+        return isGrounded;
+    }
+
+    public bool IsFalling()
+    {
+        isFalling = Mathf.Abs(enemyRB.linearVelocityY) > 5f;
+        return isFalling;
     }
 
 
@@ -103,14 +140,7 @@ public class EnemyBase : CharacterBase, IMovable
 
     protected void OnDamageAnimationEnd()
     {
-        if (lives > 0)
-        {
-            animator.SetBool(takingDamageHash, false);
-        }
-        else
-        {
-            base.Die();
-        }
+        animator.SetBool(takingDamageHash, false);
     }
 
     public int GetDamageValue()

@@ -8,7 +8,7 @@ public class EnemyFootHitBox : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Chao") || collision.CompareTag("Player"))
+        if (collision.CompareTag("Chao") ) //|| collision.CompareTag("Player"))
         {
             colidindoComChao = true;
         }

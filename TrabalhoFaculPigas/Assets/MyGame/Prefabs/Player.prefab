@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8515226348890328555}
   m_Layer: 8
   m_Name: PlayerFootHitBox
-  m_TagString: Player
+  m_TagString: HitBox
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -247,6 +247,7 @@ MonoBehaviour:
   playerFootHitBox: {fileID: 3362828480007571485}
   isGrounded: 0
   isJumping: 1
+  canDoubleJump: 0
   isRunning: 0
   isTakingDamage: 0
   canMove: 1

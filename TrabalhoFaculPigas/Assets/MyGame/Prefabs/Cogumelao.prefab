@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 3833898721891195576}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.13, y: -0.17, z: 0}
+  m_LocalPosition: {x: -0.13, y: -0.191, z: 0}
   m_LocalScale: {x: 0.22687076, y: 0.03928011, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -333,7 +333,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 1.2698001, y: -0.023600006, z: 0}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 6096232090014768169}
@@ -442,7 +442,10 @@ MonoBehaviour:
   damageToPlayer: 1
   enemyHitBox: {fileID: 7514035634292152723}
   enemyFootHitBox: {fileID: 3833898721891195576}
-  baseScaleX: 0.8
+  baseScaleX: 2
+  alreadySpawned: 0
+  isGrounded: 0
+  isFalling: 0
   enemySpeed: 0.1
   direction: 1
 --- !u!61 &1624489311714460113

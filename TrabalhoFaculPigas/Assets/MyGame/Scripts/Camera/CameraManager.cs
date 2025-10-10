@@ -16,7 +16,7 @@ public class CameraManager : UniversalAdditionalCameraData
         if (instance == null)
         {
             instance = this;
-           //  DontDestroyOnLoad(gameObject);
+            //  DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -32,7 +32,7 @@ public class CameraManager : UniversalAdditionalCameraData
 
             // Limita a posição da câmera dentro dos limites
             float clampedX = Mathf.Clamp(desiredPosition.x, -camLimits.x, camLimits.x);
-            float clampedY = Mathf.Clamp(desiredPosition.y, -camLimits.y, camLimits.y);
+            float clampedY = Mathf.Clamp(desiredPosition.y, -3, camLimits.y);
 
             Vector3 clampedPosition = new Vector3(clampedX, clampedY, desiredPosition.z);
 
@@ -45,5 +45,10 @@ public class CameraManager : UniversalAdditionalCameraData
     {
         camLimits = limits;
         return this;
+    }
+
+    public Vector2 GetCamLimits()
+    {
+        return camLimits;
     }
 }

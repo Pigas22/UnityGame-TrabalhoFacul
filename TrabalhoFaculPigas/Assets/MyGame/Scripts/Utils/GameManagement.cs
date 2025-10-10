@@ -1,3 +1,4 @@
+using Unity.XR.OpenVR;
 using UnityEngine;
 
 static class GameManagement
@@ -31,6 +32,11 @@ static class GameManagement
         UpdateMainCamera();
         return mainCamera.WorldToViewportPoint(obj.transform.position);
     }
+    public static Vector3 positionToViewPortPoint(Vector3 position)
+    {
+        UpdateMainCamera();
+        return mainCamera.WorldToViewportPoint(position);
+    }
 
     public static Vector3 viewPortPointToPosition(Vector3 viewPortPoint)
     {
@@ -57,9 +63,17 @@ static class GameManagement
         return viewportPoint.y < 0;
     }
 
+    // public static bool OutOfCamLimits(GameObject obj)
+    // {
+    //     Vector2 v2 = mainCamera.GetComponent<CameraManager>().GetCamLimits();
+    //     Vector3 camLimits = new(v2.x, v2.y, 0);
+
+    // }
+
     public static bool OutOfCam(GameObject obj)
     {
-        if (obj == playerObject) return OutOfXAxe(obj) || OutOfYDownAxe(obj);
+        if (obj.CompareTag("Player")) return OutOfXAxe(obj) || OutOfYDownAxe(obj);
+   //     else if (obj.CompareTag("Enemy")) return OutOfCamLimits(obj);
         else return OutOfXAxe(obj) || OutOfYAxe(obj);
     }
 

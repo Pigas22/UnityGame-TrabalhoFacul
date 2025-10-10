@@ -9,8 +9,6 @@ public class CharacterBase : MonoBehaviour, ICharacterBase
     {
         lives -= amount;
         Debug.Log($"{gameObject.name} took {amount} damage. Lives left: {lives}");
-
-        Die();
     }
 
     public virtual void Die()
@@ -19,6 +17,7 @@ public class CharacterBase : MonoBehaviour, ICharacterBase
         {
             isAlive = false;
             gameObject.SetActive(false);
+            //Destroy(gameObject);
             Debug.Log($"{gameObject.name} died.");
         }
     }

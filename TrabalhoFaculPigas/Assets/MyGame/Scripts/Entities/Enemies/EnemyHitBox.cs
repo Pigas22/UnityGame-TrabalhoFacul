@@ -8,10 +8,15 @@ public class EnemyHitBox : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (collision.CompareTag("Player") && GameManagement.PlayerObject.activeSelf)
         {
             colidindoComPlayer = true;
-            collision.GetComponent<PlayerManager>().TakeDamage(GetComponentInParent<EnemyBase>().GetDamageValue());
+            PlayerManager pm = collision.GetComponent<PlayerManager>();
+            
+            if (!pm.PlayerIsTakingDamage())
+            {
+                pm.TakeDamage(GetComponentInParent<EnemyBase>().GetDamageValue());
+            }
         }
     }
 

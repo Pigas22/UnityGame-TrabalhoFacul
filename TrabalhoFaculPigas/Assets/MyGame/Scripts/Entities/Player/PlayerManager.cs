@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using NUnit.Framework;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -14,11 +15,10 @@ public class PlayerManager : CharacterBase, IMovable
     [SerializeField] private GameObject playerFootHitBox;
     [SerializeField] private bool isGrounded;
     [SerializeField] private bool isJumping = false;
+    [SerializeField] private bool canDoubleJump = false;
     [SerializeField] private bool isRunning = false;
     [SerializeField] private bool isTakingDamage = false;
     [SerializeField] private bool canMove = true;
-
-    [SerializeField] private GameObject chaoPallete;
     [SerializeField] private float disableTime = 0.7f; // tempo que a colisão fica desativada
     private Rigidbody2D playerRB;
     private SpriteRenderer playerSR;
@@ -32,6 +32,7 @@ public class PlayerManager : CharacterBase, IMovable
     private int isGroundedHash = Animator.StringToHash("isGrounded");
     private int isTeleportingHash = Animator.StringToHash("isTeleporting");
     private int isTakingDamageHash = Animator.StringToHash("isTakingDamage");
+    private int isDoubleJumpingHash = Animator.StringToHash("isDoubleJumping");
 
     void Awake()
     {
@@ -51,8 +52,6 @@ public class PlayerManager : CharacterBase, IMovable
         playerSR = GetComponent<SpriteRenderer>();
         playerCC = GetComponent<CapsuleCollider2D>();
 
-        chaoPallete = chaoPallete == null ? GameObject.Find("ChaoPallete") : chaoPallete;
-
         sceneManager = GameObject.Find("SceneManager");
         spawnpoint = sceneManager.GetComponent<SceneManagerModel>().GetPlayerSpawnPoint();
         // transform.position = sceneManager.GetComponent<SceneTestManager>().GetPlayerSpawnPoint();
@@ -64,20 +63,14 @@ public class PlayerManager : CharacterBase, IMovable
     // Update is called once per frame
     void Update()
     {
-
         // playerStats();
 
         if (isAlive)
         {
+            if (isTakingDamage) return;
             Walk();
             Crouch();
             Jump();
-        }
-        else
-        {
-            Die();
-            Debug.Log("Player is dead. Game Over.");
-
         }
     }
 
@@ -86,27 +79,18 @@ public class PlayerManager : CharacterBase, IMovable
         UpdatePlayerStats();
         UpdateAnimations();
 
-        if (isAlive)
-        {
-            OutOfCam();
-        }
-
-        if (!canMove && !isTakingDamage)
-        {
-            playerRB.linearVelocityX = 0;
-            playerRB.linearVelocityY = 0;
-
-            isGrounded = false;
+        if (OutOfCam() && !isTakingDamage) {
+            TakeDamage(1);
         }
     }
 
     public void Walk()
     {
         float walkInput = Input.GetAxis("Horizontal");
-        playerRB.linearVelocityX = walkInput * playerSpeed;
 
         if (walkInput != 0 && canMove)
         {
+            playerRB.linearVelocityX = walkInput * playerSpeed;
             // Debug.Log("Player velocity X: " + playerRB.linearVelocityX);
 
             if (walkInput > 0)
@@ -117,9 +101,14 @@ public class PlayerManager : CharacterBase, IMovable
             {
                 playerSR.flipX = true;
             }
+
+            animator.SetBool(isRunningHash, isRunning);
+        }
+        else if (walkInput == 0 && !isTakingDamage)
+        {
+            playerRB.linearVelocityX = 0;
         }
 
-        animator.SetBool(isRunningHash, isRunning);
     }
 
     public void Crouch()
@@ -134,72 +123,67 @@ public class PlayerManager : CharacterBase, IMovable
 
     public void Jump()
     {
-        if (Input.GetButtonDown("Jump") && isGrounded && canMove)
+        if (Input.GetButtonUp("Jump"))
         {
-            playerRB.linearVelocityY = jumpForce;
-            animator.SetBool(isGroundedHash, isGrounded);
-            animator.SetBool(isJumpingHash, isJumping);
-        }
+            if (isGrounded && canMove)
+            {
+                playerRB.linearVelocityY = jumpForce;
+                animator.SetBool(isGroundedHash, isGrounded);
+                animator.SetBool(isJumpingHash, isJumping);
+                canDoubleJump = true;
+            }
 
+            else if (!isGrounded && canDoubleJump && isJumping)
+            {
+                Debug.Log("Pulo Duplo ON");
+                playerRB.linearVelocityY = jumpForce;
+                animator.SetBool(isDoubleJumpingHash, canDoubleJump);
+            }
+        }
     }
 
-    // private bool canTeleport(Vector3 targetPosition)
-    // {
-    //     Collider2D[] colliders = Physics2D.OverlapBoxAll(targetPosition, playerCC.size, 0f);
-    //     foreach (Collider2D collider in colliders)
-    //     {
-    //         Debug.Log("Collider found at target position: " + collider.name);
-    //         if (collider != playerCC && !collider.isTrigger)
-    //         {
-    //             return false;
-    //         }
-    //     }
-    //     return true;
-    // }
-
-    private void OutOfCam()
+    public void OnDoubleJumpAnimationEnd()
     {
-        if (GameManagement.OutOfCam(gameObject) && !isTakingDamage)
-        {
-            TakeDamage(1);
-        }
+        animator.SetBool(isDoubleJumpingHash, false);
+        canDoubleJump = false;
+    }
 
-        // if (outOfXAxe)
-        // {
-        //     TakeDamage(1);
-
-        //     // Vector3 newViewportPoint = viewportPoint;
-        //     // newViewportPoint.x = (newViewportPoint.x < 0) ? 0.99f : 0.01f;
-        //     // Vector3 targetPosition = GameManagement.viewPortPointToPosition(newViewportPoint);
-
-        //     // if 
-        //     // {
-        //     //     teleportToSpawn();
-        //     //     TakeDamage(1);
-        //     // }
-        // }
+    private bool OutOfCam()
+    {
+        return GameManagement.OutOfCam(gameObject);
     }
 
     public override void TakeDamage(int amount)
     {
         canMove = false;
         isTakingDamage = true;
+        isJumping = false;
+        isRunning = false;
 
-        animator.SetBool(isTakingDamageHash, isTakingDamage);
+        UpdateAnimations();
+
+        // Calcula o lado do dano
+        float direction = playerSR.flipX ? 1f : -1f;
+
+        // Aplica o "empurrão" para o lado oposto e um leve impulso para cima
+        playerRB.linearVelocityX = direction * (playerSpeed * 0.5f);
 
         playerRB.linearVelocityY = jumpForce * 0.5f;
-        playerRB.linearVelocityX = 1;
 
-        base.TakeDamage(amount);        
+        base.TakeDamage(amount);      
+
+        if (isAlive)
+        {
+            StartCoroutine(TakingDamageRoutine());
+        }
     }
 
     private IEnumerator TakingDamageRoutine()
     {
-        canMove = false;
-        // Define um período de invencibilidade de 0.5 segundos
-        yield return new WaitForSeconds(0.5f);
+        // Define um período de invencibilidade de 1 segundos
+        yield return new WaitForSeconds(1.5f);
 
-        canMove = true;
+        playerRB.linearVelocityX = 0;
     }
 
     public void OnDamageAnimationEnd()
@@ -207,19 +191,21 @@ public class PlayerManager : CharacterBase, IMovable
         Debug.Log("Passou por aqui");
         isTakingDamage = false;
         animator.SetBool(isTakingDamageHash, isTakingDamage);
-        StartCoroutine(TakingDamageRoutine());
-        TeleportToSpawn();
+
+        Die();
+
+        if (OutOfCam()) TeleportToSpawn();
     }
 
     void TeleportToSpawn()
     {
         Debug.Log("Teleporantando para o spawn");
-
+        
         playerRB.linearVelocityX = 0;
-        playerRB.linearVelocityY = 0;
 
         canMove = false;
         animator.SetBool(isTeleportingHash, true);
+
         Debug.Log(sceneManager.GetComponent<SceneManagerModel>().GetPlayerSpawnPoint());
         transform.position = spawnpoint;
     }
@@ -279,6 +265,11 @@ public class PlayerManager : CharacterBase, IMovable
         return isTakingDamage;
     }
 
+    public bool PlayerIsAlive()
+    {
+        return isAlive;
+    }
+
     private void UpdatePlayerStats()
     {
         IsGrounded();
@@ -336,10 +327,10 @@ public class PlayerManager : CharacterBase, IMovable
     
     private System.Collections.IEnumerator DisableCollisionTemporarily()
     {
-        chaoPallete.GetComponent<TilemapCollider2D>().enabled = false;
+        playerCC.enabled = false;
 
         yield return new WaitForSeconds(disableTime);
 
-        chaoPallete.GetComponent<TilemapCollider2D>().enabled = true;
+        playerCC.enabled = true;
     }
 }
