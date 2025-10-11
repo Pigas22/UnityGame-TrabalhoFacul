@@ -8,7 +8,7 @@ public abstract class TrapBase : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player") && GameManagement.PlayerObject.activeSelf)
+        if (collision.CompareTag("Player") && GameManagement.CurrentPlayer.activeSelf)
         {
             colidindoComPlayer = true;
             

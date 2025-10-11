@@ -212,7 +212,7 @@ public class PlayerManager : CharacterBase, IMovable
         canMove = false;
         animator.SetBool(isTeleportingHash, true);
 
-        Debug.Log(sceneManager.GetComponent<SceneManagerModel>().GetPlayerSpawnPoint());
+        spawnpoint.y -= 0.5f;
         transform.position = spawnpoint;
     }
 

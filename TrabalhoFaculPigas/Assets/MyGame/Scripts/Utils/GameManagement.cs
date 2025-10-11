@@ -1,18 +1,49 @@
+using System;
+using Unity.VisualScripting;
 using Unity.XR.OpenVR;
 using UnityEngine;
 
 static class GameManagement
 {
-    private static GameObject playerObject = GameObject.Find("Player");
-
-    private static Camera mainCamera = Camera.main;
-
-    public static GameObject PlayerObject
+    private static GameObject currentPlayer;
+    private static int currentSkinIndex = 0;
+    private static readonly GameObject[] playerPrefabs =  new GameObject[] {
+        Resources.Load<GameObject>("Prefabs/Players/VirtualGuyPlayer"),
+        Resources.Load<GameObject>("Prefabs/Players/MaskDudePlayer"),
+        Resources.Load<GameObject>("Prefabs/Players/NinjaFrogPlayer"),
+        Resources.Load<GameObject>("Prefabs/Players/PinkManPlayer")
+    };
+    public static void ConfigPlayerSkin()
     {
-        get { return playerObject; }
-        set { playerObject = value; }
+        Vector3 playerPosition;
+        // Destroi o player atual se existir
+        if (currentPlayer != null) {
+            playerPosition = currentPlayer.transform.position;
+            UnityEngine.Object.Destroy(currentPlayer);
+        }
+        else
+        {
+            playerPosition = Vector3.zero;
+        }
+
+        // Instancia o novo player
+        GameObject prefab = playerPrefabs[currentSkinIndex];
+        currentPlayer = UnityEngine.Object.Instantiate(prefab, playerPosition, Quaternion.identity);
+        currentPlayer.tag = "Player";
+    }
+    // Apenas para o Menu Principal
+    public static int CurrentSkinIndex
+    {
+        get => currentSkinIndex;
+        set => currentSkinIndex = value;
+    }
+    public static GameObject CurrentPlayer
+    {
+        get { return currentPlayer; }
+        set { currentPlayer = value; }
     }
 
+    private static Camera mainCamera = Camera.main;
     public static Camera MainCamera
     {
         get

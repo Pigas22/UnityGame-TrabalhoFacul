@@ -12,6 +12,11 @@ public class MenuPrincipalManager : MonoBehaviour
     [SerializeField] private GameObject[] niveisDoJogo;
     [SerializeField] private int indexFaseAtual = 0;
     [SerializeField] private GameObject alterarSkinPanel;
+    [SerializeField] private TextMeshProUGUI NomeSkinText;
+    [SerializeField] private Image SkinImage;
+    [Header("Sprite Settings (0=VirtualGuy, 1=MaskDude, 2=NinjaFrog, 3=PinkMan)")]
+    [SerializeField] private Sprite[] playerSprites; 
+    [SerializeField] private int indexSkinAtual;
     [SerializeField] private GameObject configPanel;
     [SerializeField] private GameObject creditsPanel;
     [SerializeField] private bool isDebugging = false;
@@ -21,6 +26,10 @@ public class MenuPrincipalManager : MonoBehaviour
         FecharTodosMenus();
     }
 
+    void Start()
+    {
+        indexSkinAtual = GameManagement.CurrentSkinIndex;
+    }
     // Jogar
     public void OpenLevelSelectorMenu()
     {
@@ -33,8 +42,8 @@ public class MenuPrincipalManager : MonoBehaviour
     public void NextLevel() // IA Version
     {
         // Primeiro, atualiza o index da fase atual
-        int previousIndex = GetPreviousIndex(indexFaseAtual);
-        int nextIndex = GetNextIndex(indexFaseAtual);
+        int previousIndex = GetPreviousLevelIndex(indexFaseAtual);
+        int nextIndex = GetNextLevelIndex(indexFaseAtual);
 
         // -----------------------------------------------------------
         // Inversão da lógica de posição dos GameObjects
@@ -125,8 +134,8 @@ public class MenuPrincipalManager : MonoBehaviour
     }
     public void PreviousLevel() // Dev Version
     {
-        int previousIndex = GetPreviousIndex(indexFaseAtual);
-        int nextIndex = GetNextIndex(indexFaseAtual);
+        int previousIndex = GetPreviousLevelIndex(indexFaseAtual);
+        int nextIndex = GetNextLevelIndex(indexFaseAtual);
 
         // -----------------------------------------------------------
         // Pega a posição do GameObject das fases
@@ -213,8 +222,8 @@ public class MenuPrincipalManager : MonoBehaviour
     }
     private void UpdateLevelPlayButton()
     {
-        int previousIndex = GetPreviousIndex(indexFaseAtual);
-        int nextIndex = GetNextIndex(indexFaseAtual);
+        int previousIndex = GetPreviousLevelIndex(indexFaseAtual);
+        int nextIndex = GetNextLevelIndex(indexFaseAtual);
 
         // Deixa somente o Bottao da Fase Selecionada Ativo
         niveisDoJogo[previousIndex].GetComponentInChildren<Button>().enabled = false;
@@ -228,10 +237,10 @@ public class MenuPrincipalManager : MonoBehaviour
         seletorNiveisPanel.SetActive(false);
         DeActivatePanelSubMenus();
     }
-    private int GetNextIndex(int indexRef) {
+    private int GetNextLevelIndex(int indexRef) {
         return (indexRef + 1) % niveisDoJogo.Length;
     }
-    private int GetPreviousIndex(int indexRef) {
+    private int GetPreviousLevelIndex(int indexRef) {
         return  (indexRef - 1 + niveisDoJogo.Length) % niveisDoJogo.Length;
     }
 
@@ -242,11 +251,34 @@ public class MenuPrincipalManager : MonoBehaviour
         ActivatePanelSubMenus();
         alterarSkinPanel.SetActive(true);
     }
-    public void PreviousSkin() { }
-    public void NextSkin() { }
+    public void PreviousSkin()
+    {
+        indexSkinAtual = GetNextSkinIndex(indexSkinAtual);
+        UpdateSkinInfos();
+    }
+    public void NextSkin()
+    {
+        indexSkinAtual = GetPreviousSkinIndex(indexSkinAtual);
+        UpdateSkinInfos();
+    }
+    private void UpdateSkinInfos()
+    {
+        SkinImage.sprite = playerSprites[indexSkinAtual];
+        if (indexSkinAtual == 0) NomeSkinText.text = "Virtual Guy";
+        else if (indexSkinAtual == 1) NomeSkinText.text = "Masked Dude";
+        else if (indexSkinAtual == 2) NomeSkinText.text = "Ninja Frog";
+        else if (indexSkinAtual == 3) NomeSkinText.text = "Pink Man";
+    }
+    private int GetNextSkinIndex(int indexRef) {
+        return  (indexRef - 1 + playerSprites.Length) % playerSprites.Length;
+    }
+    private int GetPreviousSkinIndex(int indexRef) {
+        return (indexRef + 1) % playerSprites.Length;
+    }
     public void CloseSkinChangerMenu()
     {
         GameManagement.DebugIsOpenMenu(alterarSkinPanel, false);
+        GameManagement.CurrentSkinIndex = indexSkinAtual;
         alterarSkinPanel.SetActive(false);
         DeActivatePanelSubMenus();
     }

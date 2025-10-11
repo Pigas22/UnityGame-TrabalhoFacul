@@ -12,11 +12,19 @@ public class SceneManagerModel : MonoBehaviour
     [SerializeField] protected Vector2 camLimits = new Vector2(25f, 10f);
     [SerializeField] protected bool isPaused = false;
     [SerializeField] protected GameObject playerSpawnPoint;
+    [SerializeField] public int currentSkinIndex;
 
 
     void Awake()
     {
-        GameManagement.PlayerObject = GameObject.Find("Player");
+        currentSkinIndex = GameManagement.CurrentSkinIndex;
+    }
+
+    void Start()
+    {
+        GameManagement.CurrentPlayer = GameObject.Find("Player");
+        GameManagement.ConfigPlayerSkin();
+
         if (mainCamera == null)
         {
             mainCamera = GameManagement.MainCamera;

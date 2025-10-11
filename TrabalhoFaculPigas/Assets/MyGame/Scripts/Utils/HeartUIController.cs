@@ -17,7 +17,7 @@ public class HeartUIController : MonoBehaviour
     void Start()
     {
         // Tenta encontrar o player na cena para obter o componente CharacterBase
-        playerHealthComponent = GameManagement.PlayerObject.GetComponent<PlayerManager>(); 
+        playerHealthComponent = GameManagement.CurrentPlayer.GetComponent<PlayerManager>(); 
 
         if (playerHealthComponent != null)
         {

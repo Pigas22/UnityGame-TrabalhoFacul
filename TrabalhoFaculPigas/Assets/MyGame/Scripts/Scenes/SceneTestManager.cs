@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class SceneTestManager : SceneManagerModel
 {
     [SerializeField] private List<EnemySpawnData> enemiesToSpawn;
-    [SerializeField] private GameObject playerObject;
+    [SerializeField] private GameObject CurrentPlayer;
 
     void Awake()
     {
@@ -51,12 +51,12 @@ public class SceneTestManager : SceneManagerModel
     {
         base.ConfigData();
 
-        if (playerObject == null) playerObject = GameManagement.PlayerObject;
+        if (CurrentPlayer == null) CurrentPlayer = GameManagement.CurrentPlayer;
         if (playerSpawnPoint == null) playerSpawnPoint = GameObject.Find("PlayerSpawnPoint");
     }
 
     public GameObject GetPlayerObject()
     {
-        return this.playerObject;
+        return this.CurrentPlayer;
     }
 }

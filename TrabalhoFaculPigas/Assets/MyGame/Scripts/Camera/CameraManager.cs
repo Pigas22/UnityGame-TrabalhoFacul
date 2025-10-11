@@ -11,7 +11,7 @@ public class CameraManager : UniversalAdditionalCameraData
 
     void Start()
     {
-        actualTarget = actualTarget == null ? GameManagement.PlayerObject : actualTarget;
+        actualTarget = actualTarget == null ? GameManagement.CurrentPlayer : actualTarget;
 
         if (instance == null)
         {

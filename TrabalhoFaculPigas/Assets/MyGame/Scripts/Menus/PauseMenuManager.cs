@@ -40,7 +40,7 @@ public class PauseMenuManager : MonoBehaviour
         panelConfigBackground = panelConfigBackground == null ? GameObject.Find("PanelConfigBackground") : panelConfigBackground;
         configPanel = configPanel == null ? GameObject.Find("ConfigPanel") : configPanel;
 
-        playerManager = playerManager == null ? GameManagement.PlayerObject.GetComponent<PlayerManager>() : playerManager;
+        playerManager = playerManager == null ? GameManagement.CurrentPlayer.GetComponent<PlayerManager>() : playerManager;
 
         canvasPauseMenu.SetActive(false);
         panelConfigBackground.SetActive(false);
@@ -92,8 +92,9 @@ public class PauseMenuManager : MonoBehaviour
 
     public void LoadMainMenu()
     {
-        Time.timeScale = 1f; // Retoma o tempo do jogo
+        GameManagement.CurrentSkinIndex = sceneManager.currentSkinIndex;
         Debug.Log("Loading main menu...");
+        Time.timeScale = 1f; // Retoma o tempo do jogo
         SceneManager.LoadScene("MenuPrincipal");
     }
 
