@@ -5,13 +5,6 @@ public class PlayerHitBox : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     [SerializeField] public bool colidindoComInimigo = false;
     [SerializeField] public bool colidindoComChao = false;
-    [SerializeField] private SceneManagerModel sceneManager;
-
-    void Awake()
-    {
-        sceneManager = GameObject.Find("SceneManager").GetComponent<SceneManagerModel>();
-    }
-
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Chao"))
@@ -28,7 +21,6 @@ public class PlayerHitBox : MonoBehaviour
 
             collision.GetComponent<EnemyBase>().TakeDamage(1);
         }
-
     }
 
     void OnTriggerExit2D(Collider2D collision)

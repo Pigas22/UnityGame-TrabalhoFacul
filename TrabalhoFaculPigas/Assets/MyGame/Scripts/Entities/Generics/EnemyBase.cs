@@ -55,6 +55,7 @@ public class EnemyBase : CharacterBase, IMovable
     {
         IsRunning();
         //OutOfCam();
+        CorrectEnemyAxeXVelocity();
     }
 
     public void Walk()
@@ -142,5 +143,13 @@ public class EnemyBase : CharacterBase, IMovable
     public int GetDamageValue()
     {
         return damageToPlayer;
+    }
+
+    private void CorrectEnemyAxeXVelocity()
+    {
+        if (enemyRB.linearVelocityX > (enemySpeed * 1.5f))
+        {
+            enemyRB.linearVelocityX = enemySpeed;
+        }
     }
 }

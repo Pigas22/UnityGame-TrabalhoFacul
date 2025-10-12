@@ -1,3 +1,4 @@
+using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -50,5 +51,10 @@ public class CameraManager : UniversalAdditionalCameraData
     public Vector2 GetCamLimits()
     {
         return camLimits;
+    }
+
+    public void SetActualTarget(GameObject obj)
+    {
+        actualTarget = obj;
     }
 }

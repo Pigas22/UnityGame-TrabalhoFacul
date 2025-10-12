@@ -5,14 +5,12 @@ public class CollectedItensInfo
 {
     [SerializeField] private string nameItem;
     [SerializeField] private int value;
-    [SerializeField] private int qtd;
-
+    [SerializeField] private int qtd = 0;
 
     // getters and setters of both fields
     public string NameItem { get => nameItem; set => nameItem = value; }
     public int Value { get => value; set => this.value = value; }
     public int Qtd { get => qtd; set => qtd = value; }
-
 
     public CollectedItensInfo(string nameItem, int value, int qtd)
     {

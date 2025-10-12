@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.Diagnostics;
 using UnityEngine.SceneManagement;
 using UnityEngine.Tilemaps;
+using UnityEngine.UIElements;
 
 public class SceneManagerModel : MonoBehaviour
 {
@@ -18,24 +19,18 @@ public class SceneManagerModel : MonoBehaviour
     void Awake()
     {
         currentSkinIndex = GameManagement.CurrentSkinIndex;
+        ConfigData(); 
     }
 
     void Start()
     {
-        GameManagement.CurrentPlayer = GameObject.Find("Player");
+        GameObject playerObject = GameObject.Find("Player");
+        if (playerObject != null) GameManagement.CurrentPlayer = playerObject;
         GameManagement.ConfigPlayerSkin();
-
-        if (mainCamera == null)
-        {
-            mainCamera = GameManagement.MainCamera;
-        }
-
-        if (playerSpawnPoint == null)
-        {
-            playerSpawnPoint = GameObject.Find("PlayerSpawnPoint");
-        }
-
-        ConfigData();
+        
+        pauseMenuManager.GetComponent<PauseMenuManager>().enabled = true;
+        
+        mainCamera.GetComponent<CameraManager>().SetActualTarget(GameManagement.CurrentPlayer);
     }
 
     void Update()
@@ -61,12 +56,12 @@ public class SceneManagerModel : MonoBehaviour
 
     protected void ConfigData()
     {
+        if (mainCamera == null) mainCamera = GameManagement.MainCamera;
         mainCamera.GetComponent<CameraManager>().SetLevelLimits(camLimits);
 
-        if (pauseMenuManager == null)
-        {
-            pauseMenuManager = GameObject.Find("PauseMenuManager");
-        }
+        if (playerSpawnPoint == null) playerSpawnPoint = GameObject.Find("PlayerSpawnPoint");
+
+        if (pauseMenuManager == null) pauseMenuManager = GameObject.Find("PauseMenuManager");
         pauseMenuManager.GetComponent<PauseMenuManager>().ResumeGame();
     }
 

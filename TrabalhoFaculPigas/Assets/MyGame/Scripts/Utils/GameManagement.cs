@@ -21,10 +21,7 @@ static class GameManagement
             playerPosition = currentPlayer.transform.position;
             UnityEngine.Object.Destroy(currentPlayer);
         }
-        else
-        {
-            playerPosition = Vector3.zero;
-        }
+        else { playerPosition = Vector3.zero; }
 
         // Instancia o novo player
         GameObject prefab = playerPrefabs[currentSkinIndex];

@@ -11,8 +11,8 @@ public class PlayerManager : CharacterBase, IMovable
 { 
     [SerializeField] private float playerSpeed = 5f;
     [SerializeField] private float jumpForce = 6f;
-    
-    [SerializeField] private List<CollectedItensInfo> collectedItensInfos = new List<CollectedItensInfo>();
+
+    [SerializeField] private List<CollectedItensInfo> collectedItensInfos =  new List<CollectedItensInfo>();
     [SerializeField] private int totalScore = 0;
     [SerializeField] private GameObject playerFootHitBox;
     [SerializeField] private bool isGrounded;
@@ -21,7 +21,8 @@ public class PlayerManager : CharacterBase, IMovable
     [SerializeField] private bool isRunning = false;
     [SerializeField] private bool isTakingDamage = false;
     [SerializeField] private bool canMove = true;
-    [SerializeField] private float disableTime = 0.7f; // tempo que a colisão fica desativada
+    [SerializeField] private bool isAttacking = false;
+    [SerializeField] private float disableTime = 0.5f; // tempo que a colisão fica desativada
     private Rigidbody2D playerRB;
     private SpriteRenderer playerSR;
     private CapsuleCollider2D playerCC;
@@ -46,9 +47,7 @@ public class PlayerManager : CharacterBase, IMovable
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        playerFootHitBox = GameObject.Find("PlayerFootHitBox");
-        playerFootHitBox.transform.SetParent(this.transform); // Torna a hitbox filha do jogador
-        playerFootHitBox.transform.localPosition = new Vector3(0, -0.149f, 0); // Centraliza a hitbox no jogador
+       //collectedItensInfos = new List<CollectedItensInfo>();
 
         playerRB = GetComponent<Rigidbody2D>();
         playerSR = GetComponent<SpriteRenderer>();
@@ -73,6 +72,7 @@ public class PlayerManager : CharacterBase, IMovable
             Walk();
             Crouch();
             Jump();
+            Attack();
         }
     }
 
@@ -130,9 +130,24 @@ public class PlayerManager : CharacterBase, IMovable
         }
     }
 
+    public void Attack()
+    {
+        if (Input.GetButtonUp("Fire1") &&  !isTakingDamage)
+        {
+            isAttacking = true;
+            StartCoroutine(AttackCooldown());
+        }
+    }
+    
+    private IEnumerator AttackCooldown()
+    {
+        yield return new WaitForSeconds(0.3f);
+        isAttacking = false;
+    }
+
     public void Jump()
     {
-        if (Input.GetButtonUp("Jump"))
+        if (Input.GetButtonDown("Jump"))
         {
             if (isGrounded && canMove)
             {
@@ -212,8 +227,8 @@ public class PlayerManager : CharacterBase, IMovable
         canMove = false;
         animator.SetBool(isTeleportingHash, true);
 
-        spawnpoint.y -= 0.5f;
-        transform.position = spawnpoint;
+        
+        transform.position = new(spawnpoint.x, spawnpoint.y - 0.5f, spawnpoint.z);
     }
 
     private void OnTeleportAnimationEnd()
@@ -271,6 +286,10 @@ public class PlayerManager : CharacterBase, IMovable
         return isTakingDamage;
     }
 
+    public bool PlayerIsAttacking()
+    {
+        return isAttacking;
+    }
     private void UpdatePlayerStats()
     {
         IsGrounded();

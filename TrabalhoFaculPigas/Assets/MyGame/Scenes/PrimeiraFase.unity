@@ -4784,31 +4784,19 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 2065054876}
+    m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1345248131267259864, guid: de172e78f5b875045ae08d7b8627643c, type: 3}
       propertyPath: m_SortingLayer
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2940279944985293333, guid: de172e78f5b875045ae08d7b8627643c, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2940279944985293333, guid: de172e78f5b875045ae08d7b8627643c, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2940279944985293333, guid: de172e78f5b875045ae08d7b8627643c, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2940279944985293333, guid: de172e78f5b875045ae08d7b8627643c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.65
+      value: -10.950001
       objectReference: {fileID: 0}
     - target: {fileID: 2940279944985293333, guid: de172e78f5b875045ae08d7b8627643c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.95
+      value: -5.8500004
       objectReference: {fileID: 0}
     - target: {fileID: 2940279944985293333, guid: de172e78f5b875045ae08d7b8627643c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4866,6 +4854,10 @@ PrefabInstance:
       propertyPath: platformLayer.m_Bits
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 4142629416460072667, guid: de172e78f5b875045ae08d7b8627643c, type: 3}
+      propertyPath: collectedItensInfos.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8515226348890328555, guid: de172e78f5b875045ae08d7b8627643c, type: 3}
       propertyPath: sceneManager
       value: 
@@ -4895,11 +4887,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d637e6971db14594f8d3ba93d9761b93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerManager
---- !u!4 &472706292 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2940279944985293333, guid: de172e78f5b875045ae08d7b8627643c, type: 3}
-  m_PrefabInstance: {fileID: 472706289}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &519751454
 GameObject:
   m_ObjectHideFlags: 0
@@ -5690,6 +5677,7 @@ MonoBehaviour:
   camLimits: {x: 20, y: 3}
   isPaused: 0
   playerSpawnPoint: {fileID: 1443066220}
+  currentSkinIndex: 0
   sceneEnimies: {fileID: 1246496742}
   enemiesToSpawn:
   - enemyPrefab: {fileID: 9061724929356899401, guid: a25ec3575ca44424eb512e3375292a36, type: 3}
@@ -7387,7 +7375,7 @@ Transform:
   m_GameObject: {fileID: 1778653068}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10.286894, y: -2.7923737, z: -10}
+  m_LocalPosition: {x: -10.949997, y: -2.999999, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7777,7 +7765,6 @@ Transform:
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 472706292}
   - {fileID: 1267820371}
   - {fileID: 1246496743}
   - {fileID: 519751455}
@@ -7989,4 +7976,5 @@ SceneRoots:
   - {fileID: 1275586898}
   - {fileID: 2118603745}
   - {fileID: 140917369}
+  - {fileID: 472706289}
   - {fileID: 2065054876}

@@ -7,7 +7,6 @@ public class PauseMenuManager : MonoBehaviour
 {
     [SerializeField] private SceneManagerModel sceneManager;
     [SerializeField] private GameObject canvasPauseMenu;
-    [SerializeField] private PlayerManager playerManager;
     public GameObject pontosTotaisObject;
     private TextMeshProUGUI pontosTotaisText;
     public GameObject collectablesInfoObject;
@@ -17,20 +16,8 @@ public class PauseMenuManager : MonoBehaviour
     [SerializeField] private GameObject panelConfigBackground;
     [SerializeField] private GameObject configPanel;
 
-    void Awake()
+    void Start()
     {
-        // if (sceneManager == null)
-        // {
-        //     sceneManager = GameObject.Find("SceneManager").GetComponent<SceneTestManager>();
-        // }
-        // else sceneManager = GetComponent<SceneTestManager>();
-
-        // if (canvasPauseMenu == null)
-        // {
-        //     canvasPauseMenu = GameObject.Find("CanvasPauseMenu");
-        // }
-        // else canvasPauseMenu = GetComponent<GameObject>();
-
         sceneManager = sceneManager == null ? GameObject.Find("SceneManager").GetComponent<SceneManagerModel>() : sceneManager;
         canvasPauseMenu = canvasPauseMenu == null ? GameObject.Find("CanvasPauseMenu") : canvasPauseMenu;
 
@@ -40,13 +27,10 @@ public class PauseMenuManager : MonoBehaviour
         panelConfigBackground = panelConfigBackground == null ? GameObject.Find("PanelConfigBackground") : panelConfigBackground;
         configPanel = configPanel == null ? GameObject.Find("ConfigPanel") : configPanel;
 
-        playerManager = playerManager == null ? GameManagement.CurrentPlayer.GetComponent<PlayerManager>() : playerManager;
-
         canvasPauseMenu.SetActive(false);
         panelConfigBackground.SetActive(false);
         configPanel.SetActive(false);
     }
-
     public void PauseGame()
     {
         Time.timeScale = 0f; // Pausa o tempo do jogo
@@ -100,7 +84,18 @@ public class PauseMenuManager : MonoBehaviour
 
     void OnEnable()
     {
-        collectablesInfoText.text = "";
+        if (GameManagement.CurrentPlayer == null)
+        {
+            Debug.LogWarning("CurrentPlayer ainda não foi inicializado.");
+            return;
+        }
+
+        PlayerManager playerManager = GameManagement.CurrentPlayer.GetComponent<PlayerManager>();
+        if (playerManager == null)
+        {
+            Debug.LogWarning("PlayerManager não encontrado no CurrentPlayer!");
+            return;
+        }
 
         if (pontosTotaisObject == null)
         {
@@ -113,9 +108,8 @@ public class PauseMenuManager : MonoBehaviour
             Debug.LogWarning("TextMeshProUGUI não encontrado no pontosTotaisObject!");
             return;
         }
-
-        if (playerManager == null) return;
         
+        collectablesInfoText.text = "";
         if (playerManager.GetTotalScore() >= 0)
         {
             var lista = playerManager.GetCollectedItensInfos();
@@ -133,8 +127,6 @@ public class PauseMenuManager : MonoBehaviour
                     {
                         orangeCollectableInfoText.text = item.Qtd + " X " + item.Value + " = " + (item.Qtd * item.Value);
                     }
-
-                    // collectablesInfoText.text += item.ToString() + "\n";
                 }
             }
             else

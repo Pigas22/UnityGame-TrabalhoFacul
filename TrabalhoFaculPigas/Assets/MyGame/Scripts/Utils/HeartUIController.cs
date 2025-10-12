@@ -14,7 +14,7 @@ public class HeartUIController : MonoBehaviour
     // Referência ao seu PlayerManager (que herda de CharacterBase)
     private PlayerManager playerHealthComponent; 
 
-    void Start()
+    void LateUpdate()
     {
         // Tenta encontrar o player na cena para obter o componente CharacterBase
         playerHealthComponent = GameManagement.CurrentPlayer.GetComponent<PlayerManager>(); 
@@ -23,6 +23,8 @@ public class HeartUIController : MonoBehaviour
         {
             // INSCREVE-SE no evento de mudança de vida!
             playerHealthComponent.OnHealthChanged += UpdateHealthDisplay;
+            // Garante que o HUD seja iniciado com a vida atual
+            UpdateHealthDisplay(playerHealthComponent.GetCurrentHealth(), playerHealthComponent.IsAlive());
         }
         else
         {
@@ -30,8 +32,6 @@ public class HeartUIController : MonoBehaviour
             return;
         }
 
-        // Garante que o HUD seja iniciado com a vida atual
-        UpdateHealthDisplay(playerHealthComponent.GetCurrentHealth(), playerHealthComponent.IsAlive());
     }
 
     void OnDisable()
