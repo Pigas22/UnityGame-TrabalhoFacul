@@ -10,13 +10,13 @@ public class PlayerHitBox : MonoBehaviour
         if (collision.CompareTag("Chao"))
         {
             colidindoComChao = true;
-            Debug.Log("Colidindo com o chão");
+            GameManagement.DebugLog("Colidindo com o chão");
 
         }
 
         if (collision.CompareTag("Enemy"))
         {
-            Debug.Log("Player hit a enemy!");
+            GameManagement.DebugLog("Player hit a enemy!");
             colidindoComInimigo = true;
 
             collision.GetComponent<EnemyBase>().TakeDamage(1);

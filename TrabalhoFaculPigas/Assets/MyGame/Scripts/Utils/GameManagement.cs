@@ -1,10 +1,12 @@
 using System;
+using System.ComponentModel;
 using Unity.VisualScripting;
 using Unity.XR.OpenVR;
 using UnityEngine;
 
 static class GameManagement
 {
+    private static bool isDebugging = false;
     private static GameObject currentPlayer;
     private static int currentSkinIndex = 0;
     private static readonly GameObject[] playerPrefabs =  new GameObject[] {
@@ -91,13 +93,6 @@ static class GameManagement
         return viewportPoint.y < 0;
     }
 
-    // public static bool OutOfCamLimits(GameObject obj)
-    // {
-    //     Vector2 v2 = mainCamera.GetComponent<CameraManager>().GetCamLimits();
-    //     Vector3 camLimits = new(v2.x, v2.y, 0);
-
-    // }
-
     public static bool OutOfCam(GameObject obj)
     {
         if (obj.CompareTag("Player")) return OutOfXAxe(obj) || OutOfYDownAxe(obj);
@@ -109,12 +104,17 @@ static class GameManagement
     // Mostra no console qual objeto está abrindo ou fechando
     public static void DebugIsOpenMenu(string name, bool isOpenning)
     {
-        if (isOpenning) Debug.Log("Abrindo: " + name);
-        else Debug.Log("Fechando: " + name);
+        if (isOpenning) DebugLog("Abrindo: " + name);
+        else DebugLog("Fechando: " + name);
     }
     public static void DebugIsOpenMenu(GameObject obj, bool isOpenning)
     {
-        if (isOpenning) Debug.Log("Abrindo: " + obj.name);
-        else Debug.Log("Fechando: " + obj.name);
+        if (isOpenning) DebugLog("Abrindo: " + obj.name);
+        else DebugLog("Fechando: " + obj.name);
+    }
+
+    public static void DebugLog(string msg)
+    {
+        if (isDebugging) Debug.Log(msg);
     }
 }

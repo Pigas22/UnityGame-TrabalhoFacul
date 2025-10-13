@@ -19,7 +19,6 @@ public class MenuPrincipalManager : MonoBehaviour
     [SerializeField] private int indexSkinAtual;
     [SerializeField] private GameObject configPanel;
     [SerializeField] private GameObject creditsPanel;
-    [SerializeField] private bool isDebugging = false;
 
     void Awake()
     {
@@ -292,7 +291,7 @@ public class MenuPrincipalManager : MonoBehaviour
     }
     public void SaveSettings()
     {
-        Debug.Log("Salvando Alterações");
+        GameManagement.DebugLog("Salvando Alterações");
         configPanel.SetActive(false);
         DeActivatePanelSubMenus();
     }

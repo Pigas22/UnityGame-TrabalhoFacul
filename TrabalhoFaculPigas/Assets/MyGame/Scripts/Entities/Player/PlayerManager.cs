@@ -93,7 +93,7 @@ public class PlayerManager : CharacterBase, IMovable
         if (walkInput != 0 && canMove)
         {
             playerRB.linearVelocityX = walkInput * playerSpeed;
-            // Debug.Log("Player velocity X: " + playerRB.linearVelocityX);
+            // GameManagement.DebugLog("Player velocity X: " + playerRB.linearVelocityX);
 
             if (walkInput > 0)
             {
@@ -118,7 +118,7 @@ public class PlayerManager : CharacterBase, IMovable
         if (canMove &&
                     (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)))
         {
-            Debug.Log("Agachando");
+            GameManagement.DebugLog("Agachando");
 
             GameObject groundObject = GameObject.FindGameObjectWithTag("Chao");
             TilemapCollider2D groundCollider = groundObject?.GetComponent<TilemapCollider2D>();
@@ -159,7 +159,7 @@ public class PlayerManager : CharacterBase, IMovable
 
             else if (!isGrounded && canDoubleJump && isJumping)
             {
-                Debug.Log("Pulo Duplo ON");
+                GameManagement.DebugLog("Pulo Duplo ON");
                 playerRB.linearVelocityY = jumpForce;
                 animator.SetBool(isDoubleJumpingHash, canDoubleJump);
             }
@@ -177,7 +177,6 @@ public class PlayerManager : CharacterBase, IMovable
     public override void TakeDamage(int amount)
     {
         if (isTakingDamage) return;
-
 
         if (base.IsAlive())
         {
@@ -208,7 +207,7 @@ public class PlayerManager : CharacterBase, IMovable
 
     public void OnDamageAnimationEnd()
     {
-        Debug.Log("Passou por aqui");
+        GameManagement.DebugLog("Passou por aqui");
         isTakingDamage = false;
         animator.SetBool(isTakingDamageHash, isTakingDamage);
 
@@ -220,7 +219,7 @@ public class PlayerManager : CharacterBase, IMovable
 
     void TeleportToSpawn()
     {
-        Debug.Log("Teleporantando para o spawn");
+        GameManagement.DebugLog("Teleporantando para o spawn");
         
         playerRB.linearVelocityX = 0;
 
@@ -257,7 +256,7 @@ public class PlayerManager : CharacterBase, IMovable
 
     private void IsJumping()
     {
-        // Debug.Log("Jogador está pulando ? " + isJumping);
+        // GameManagement.DebugLog("Jogador está pulando ? " + isJumping);
         if (!isGrounded && Mathf.Abs(playerRB.linearVelocityY) > 0.001f)
         {
             isJumping = true;
@@ -310,16 +309,16 @@ public class PlayerManager : CharacterBase, IMovable
     public void PlayerStats()
     {
         base.CharacterStats();
-        Debug.Log("Player isGrounded: " + isGrounded);
-        Debug.Log("Player isJumping: " + isJumping);
-        Debug.Log("Player Velocity X: " + playerRB.linearVelocityX);
-        Debug.Log("Player Velocity Y: " + playerRB.linearVelocityY);
+        GameManagement.DebugLog("Player isGrounded: " + isGrounded);
+        GameManagement.DebugLog("Player isJumping: " + isJumping);
+        GameManagement.DebugLog("Player Velocity X: " + playerRB.linearVelocityX);
+        GameManagement.DebugLog("Player Velocity Y: " + playerRB.linearVelocityY);
     }
 
     public void AddScore((string name, int value) collectibleInfo)
     {
         totalScore += collectibleInfo.value;
-        Debug.Log("Total Score: " + totalScore);
+        GameManagement.DebugLog("Total Score: " + totalScore);
 
         // Procura se já existe o item na lista
         var found = collectedItensInfos.Find(item => item.NameItem == collectibleInfo.name);

@@ -85,4 +85,9 @@ public class SceneManagerModel : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         mainCamera = GameManagement.MainCamera;
     }
+
+    public void FinishGame()
+    {
+        
+    }
 }

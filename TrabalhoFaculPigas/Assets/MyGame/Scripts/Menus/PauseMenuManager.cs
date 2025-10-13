@@ -54,7 +54,7 @@ public class PauseMenuManager : MonoBehaviour
     }
     public void SaveSettings()
     {
-        Debug.Log("Salvando Alterações");
+        GameManagement.DebugLog("Salvando Alterações");
 
         CloseSettingsMenu();
     }
@@ -68,7 +68,7 @@ public class PauseMenuManager : MonoBehaviour
 
     public void RestartLevel()
     {
-        Debug.Log("Restarting level...");
+        GameManagement.DebugLog("Restarting level...");
         Time.timeScale = 1f;
         sceneManager.RestartCurrentScene();
     }
@@ -77,7 +77,7 @@ public class PauseMenuManager : MonoBehaviour
     public void LoadMainMenu()
     {
         GameManagement.CurrentSkinIndex = sceneManager.currentSkinIndex;
-        Debug.Log("Loading main menu...");
+        GameManagement.DebugLog("Loading main menu...");
         Time.timeScale = 1f; // Retoma o tempo do jogo
         SceneManager.LoadScene("MenuPrincipal");
     }
@@ -116,7 +116,7 @@ public class PauseMenuManager : MonoBehaviour
 
             if (lista.Count > 0)
             {
-                Debug.Log("Primeiro item : " + playerManager.GetCollectedItensInfos()[0].ToString());
+                GameManagement.DebugLog("Primeiro item : " + playerManager.GetCollectedItensInfos()[0].ToString());
                 foreach (CollectedItensInfo item in lista)
                 {
                     if (item.NameItem == "Kiwi")
@@ -131,7 +131,7 @@ public class PauseMenuManager : MonoBehaviour
             }
             else
             {
-                Debug.Log("Lista : " + playerManager.GetCollectedItensInfos().ToString());
+                GameManagement.DebugLog("Lista : " + playerManager.GetCollectedItensInfos().ToString());
             }
 
             pontosTotaisText.text = "Total de Pontos: " + playerManager.GetTotalScore().ToString();

@@ -15,7 +15,7 @@ public abstract class CollectibleBase : MonoBehaviour
         if (entity != null)
         {
             entity.AddScore((collectibleName, scoreValue));
-            Debug.Log($"{collectibleName} collected! Score +{scoreValue}");
+            GameManagement.DebugLog($"{collectibleName} collected! Score +{scoreValue}");
         }
     }
 

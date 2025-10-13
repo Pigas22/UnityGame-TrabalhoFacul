@@ -19,7 +19,7 @@ public class CharacterBase : MonoBehaviour
         currentHealth -= amount;
         currentHealth = Mathf.Max(currentHealth, 0);
 
-        Debug.Log($"{gameObject.name} took {amount} damage. Health left: {currentHealth}");
+        GameManagement.DebugLog($"{gameObject.name} took {amount} damage. Health left: {currentHealth}");
     }
 
     public virtual void Die()
@@ -29,7 +29,7 @@ public class CharacterBase : MonoBehaviour
             isAlive = false;
             gameObject.SetActive(false);
             //Destroy(gameObject);
-            Debug.Log($"{gameObject.name} died.");
+            GameManagement.DebugLog($"{gameObject.name} died.");
         }
     }
     
@@ -41,7 +41,7 @@ public class CharacterBase : MonoBehaviour
         currentHealth += amount;
         currentHealth = Mathf.Min(currentHealth, maxHealth); // Garante que não exceda o HP máximo
         
-        Debug.Log($"{gameObject.name} healed {amount}. Health: {currentHealth}");
+        GameManagement.DebugLog($"{gameObject.name} healed {amount}. Health: {currentHealth}");
     }
     
     protected void InitConfigHPChar(int maxHealth)
@@ -55,8 +55,8 @@ public class CharacterBase : MonoBehaviour
 
     public void CharacterStats()
     {
-        Debug.Log(gameObject.name + " Max HP: " + maxHealth);
-        Debug.Log(gameObject.name + " Current HP: " + currentHealth);
-        Debug.Log(gameObject.name + " Position: " + transform.position);
+        GameManagement.DebugLog(gameObject.name + " Max HP: " + maxHealth);
+        GameManagement.DebugLog(gameObject.name + " Current HP: " + currentHealth);
+        GameManagement.DebugLog(gameObject.name + " Position: " + transform.position);
     }
 }
