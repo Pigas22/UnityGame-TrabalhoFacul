@@ -16,6 +16,7 @@ public abstract class TrapBase : MonoBehaviour
 
             if (!pm.PlayerIsTakingDamage())
             {
+                Debug.Log("Eu dei dano " + gameObject.name);
                 pm.TakeDamage(damageValue);
             }
         }

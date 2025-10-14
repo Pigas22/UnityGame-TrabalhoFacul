@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class PlayerHitBox : MonoBehaviour
@@ -5,7 +6,7 @@ public class PlayerHitBox : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     [SerializeField] public bool colidindoComInimigo = false;
     [SerializeField] public bool colidindoComChao = false;
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.CompareTag("Chao"))
         {
@@ -13,7 +14,10 @@ public class PlayerHitBox : MonoBehaviour
             GameManagement.DebugLog("Colidindo com o chão");
 
         }
+    }
 
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
         if (collision.CompareTag("Enemy"))
         {
             GameManagement.DebugLog("Player hit a enemy!");
@@ -22,7 +26,7 @@ public class PlayerHitBox : MonoBehaviour
             collision.GetComponent<EnemyBase>().TakeDamage(1);
         }
     }
-
+        
     void OnTriggerExit2D(Collider2D collision)
     {
         colidindoComInimigo = false;

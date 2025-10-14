@@ -23,13 +23,33 @@ public class EnemyBase : CharacterBase, IMovable
     protected SpriteRenderer enemySR;
     protected BoxCollider2D enemyBC;
     protected Animator animator = null;
-
     protected int takingDamageHash = Animator.StringToHash("takingDamage");
     protected int isRunningHash = Animator.StringToHash("isRunning");
+
+    protected static GameObject MusicPlayer;
+    protected static AudioSource audioHitted;
+    protected static float enemyVolume;
 
     void Awake()
     {
         alreadySpawned = true;
+        enemyVolume = GameManagement.MusicVolume * 2f;
+    }
+
+    void Start()
+    {
+        if (MusicPlayer == null)
+        {
+            MusicPlayer = new GameObject("Enemy Music Player");
+            MusicPlayer.transform.position = gameObject.transform.position;
+            DontDestroyOnLoad(MusicPlayer);
+
+            audioHitted = MusicPlayer.AddComponent<AudioSource>();
+            audioHitted.clip = Resources.Load<AudioClip>("Sounds/Tuc");
+            audioHitted.volume = enemyVolume;
+            audioHitted.time = 1.6f;
+            audioHitted.loop = false;
+        }
     }
 
     // Update is called once per frame
@@ -130,6 +150,7 @@ public class EnemyBase : CharacterBase, IMovable
 
     public override void TakeDamage(int damage)
     {
+        audioHitted.Play();
         animator.SetBool(takingDamageHash, true);
         base.TakeDamage(damage);
     }

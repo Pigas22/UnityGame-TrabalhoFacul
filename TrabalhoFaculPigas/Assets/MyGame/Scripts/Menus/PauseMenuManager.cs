@@ -9,8 +9,6 @@ public class PauseMenuManager : MonoBehaviour
     [SerializeField] private GameObject canvasPauseMenu;
     public GameObject pontosTotaisObject;
     private TextMeshProUGUI pontosTotaisText;
-    public GameObject collectablesInfoObject;
-    private TextMeshProUGUI collectablesInfoText;
     [SerializeField] private TextMeshProUGUI kiwiCollectableInfoText;
     [SerializeField] private TextMeshProUGUI orangeCollectableInfoText;
     [SerializeField] private GameObject panelConfigBackground;
@@ -22,7 +20,6 @@ public class PauseMenuManager : MonoBehaviour
         canvasPauseMenu = canvasPauseMenu == null ? GameObject.Find("CanvasPauseMenu") : canvasPauseMenu;
 
         pontosTotaisText = pontosTotaisObject.GetComponent<TextMeshProUGUI>();
-        collectablesInfoText = collectablesInfoObject.GetComponent<TextMeshProUGUI>();
 
         panelConfigBackground = panelConfigBackground == null ? GameObject.Find("PanelConfigBackground") : panelConfigBackground;
         configPanel = configPanel == null ? GameObject.Find("ConfigPanel") : configPanel;
@@ -67,7 +64,7 @@ public class PauseMenuManager : MonoBehaviour
 
 
     public void RestartLevel()
-    {
+    { 
         GameManagement.DebugLog("Restarting level...");
         Time.timeScale = 1f;
         sceneManager.RestartCurrentScene();
@@ -76,6 +73,7 @@ public class PauseMenuManager : MonoBehaviour
 
     public void LoadMainMenu()
     {
+        sceneManager.DestroyMusicPlayer();
         GameManagement.CurrentSkinIndex = sceneManager.currentSkinIndex;
         GameManagement.DebugLog("Loading main menu...");
         Time.timeScale = 1f; // Retoma o tempo do jogo
@@ -108,37 +106,7 @@ public class PauseMenuManager : MonoBehaviour
             Debug.LogWarning("TextMeshProUGUI não encontrado no pontosTotaisObject!");
             return;
         }
-        
-        collectablesInfoText.text = "";
-        if (playerManager.GetTotalScore() >= 0)
-        {
-            var lista = playerManager.GetCollectedItensInfos();
 
-            if (lista.Count > 0)
-            {
-                GameManagement.DebugLog("Primeiro item : " + playerManager.GetCollectedItensInfos()[0].ToString());
-                foreach (CollectedItensInfo item in lista)
-                {
-                    if (item.NameItem == "Kiwi")
-                    {
-                        kiwiCollectableInfoText.text = item.Qtd + " X " + item.Value + " = " + (item.Qtd * item.Value);
-                    }
-                    else if (item.NameItem == "Orange")
-                    {
-                        orangeCollectableInfoText.text = item.Qtd + " X " + item.Value + " = " + (item.Qtd * item.Value);
-                    }
-                }
-            }
-            else
-            {
-                GameManagement.DebugLog("Lista : " + playerManager.GetCollectedItensInfos().ToString());
-            }
-
-            pontosTotaisText.text = "Total de Pontos: " + playerManager.GetTotalScore().ToString();
-        }
-        else
-        {
-            pontosTotaisText.text = "Total de Pontos: --";
-        }
+        GameManagement.AtualizaScoreInfoPlayer(playerManager, kiwiCollectableInfoText, orangeCollectableInfoText, pontosTotaisText);
     }
 }

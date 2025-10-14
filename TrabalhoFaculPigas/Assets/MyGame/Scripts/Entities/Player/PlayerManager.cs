@@ -21,7 +21,9 @@ public class PlayerManager : CharacterBase, IMovable
     [SerializeField] private bool isRunning = false;
     [SerializeField] private bool isTakingDamage = false;
     [SerializeField] private bool canMove = true;
+    [SerializeField] private bool stopped = false;
     [SerializeField] private bool isAttacking = false;
+    [SerializeField] private static bool isInvencible;
     [SerializeField] private float disableTime = 0.5f; // tempo que a colisão fica desativada
     private Rigidbody2D playerRB;
     private SpriteRenderer playerSR;
@@ -40,6 +42,7 @@ public class PlayerManager : CharacterBase, IMovable
 
     void Awake()
     {
+        isInvencible = true;
         InitConfigHPChar(6);
         animator = GetComponent<Animator>();
     }
@@ -57,33 +60,47 @@ public class PlayerManager : CharacterBase, IMovable
         spawnpoint = sceneManager.GetComponent<SceneManagerModel>().GetPlayerSpawnPoint();
         // transform.position = sceneManager.GetComponent<SceneTestManager>().GetPlayerSpawnPoint();
 
-        UpdatePlayerStats();
         TeleportToSpawn();
+        UpdatePlayerStats();
     }
 
     // Update is called once per frame
     void Update()
     {
-        // playerStats();
+        if (stopped) return;
 
         if (IsAlive())
         {
             if (isTakingDamage) return;
-            Walk();
-            Crouch();
-            Jump();
+            if (canMove) {
+                Walk();
+                Crouch();
+                Jump(); 
+            }
             Attack();
         }
     }
 
     void LateUpdate()
     {
+        if (stopped) return;
+
         UpdatePlayerStats();
         UpdateAnimations();
 
-        if (OutOfCam() && !isTakingDamage) {
-            TakeDamage(1);
+        if (OutOfCam() && !isTakingDamage)
+        {
+            if (!isInvencible)
+            {
+                Debug.Log("Tomou dano por sair da tela");
+                TakeDamage(1);
+            }
+            else
+            {
+                StartCoroutine(DisableInvencibleMode());
+            }
         }
+
     }
 
     public void Walk()
@@ -178,7 +195,7 @@ public class PlayerManager : CharacterBase, IMovable
     {
         if (isTakingDamage) return;
 
-        if (base.IsAlive())
+        if (base.IsAlive() )
         {
             canMove = false;
             isTakingDamage = true;
@@ -289,8 +306,37 @@ public class PlayerManager : CharacterBase, IMovable
     {
         return isAttacking;
     }
+
+    public void StopPlayer()
+    {
+        stopped = true;
+        StartCoroutine(FreezePlayerRoutine());
+        UpdatePlayerStats();
+        UpdateAnimations();
+        animator.SetBool(isGroundedHash, true);
+    }
+    
+    private IEnumerator FreezePlayerRoutine()
+    {
+        yield return new WaitForSeconds(0.5f);
+        playerRB.constraints = RigidbodyConstraints2D.FreezePositionX; //| RigidbodyConstraints2D.FreezePositionY;
+    }
+    
     private void UpdatePlayerStats()
     {
+        if (stopped)
+        {
+            isGrounded = false;
+            canMove = false;
+            isRunning = false;
+            isTakingDamage = false;
+            isJumping = false;
+            canDoubleJump = false;
+            isAttacking = false;
+            
+            return;
+        }
+
         IsGrounded();
         IsRunning();
         IsJumping();
@@ -342,7 +388,7 @@ public class PlayerManager : CharacterBase, IMovable
     {
         return this.collectedItensInfos;
     }
-    
+
     private IEnumerator DisableCollisionTemporarily(TilemapCollider2D groundCollider)
     {
         // playerCC.enabled = false;
@@ -352,5 +398,11 @@ public class PlayerManager : CharacterBase, IMovable
 
         // playerCC.enabled = true;
         Physics2D.IgnoreCollision(playerCC, groundCollider, false);
+    }
+
+    private IEnumerator DisableInvencibleMode()
+    {
+        yield return new WaitForSeconds(0.7f);
+        isInvencible = false;
     }
 }

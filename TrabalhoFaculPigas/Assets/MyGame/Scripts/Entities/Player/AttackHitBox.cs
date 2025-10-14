@@ -82,40 +82,6 @@ public class AttackHitBox : MonoBehaviour
             }
         }
     }
-    
-    private IEnumerator GetBoxRewardVerification(BoxBase box)
-    {
-        yield return new WaitForSeconds(1.5f);
-
-        if (!box.GetBoxIsAlive())
-        {
-            var player = GameManagement.CurrentPlayer.GetComponent<PlayerManager>();
-            int valorRecompensa = box.GetBoxReward();
-            string msg = "";
-
-            Debug.Log("Teste");
-
-            if (valorRecompensa > 0)
-            {
-                player.Heal(valorRecompensa);
-                msg = "Jogador Curou ";
-            Debug.Log("Teste1");
-            }
-            else if (valorRecompensa < 0)
-            {
-                player.TakeDamage(valorRecompensa * -1);
-                msg = "Jogador perdeu ";
-            Debug.Log("Teste2");
-            }
-            else
-            {
-                msg = "Teste ";
-            Debug.Log("Teste3");
-            }
-
-            GameManagement.DebugLog(msg + valorRecompensa + " de vida");
-        }
-    }
 
     void OnTriggerExit2D(Collider2D collision)
     {

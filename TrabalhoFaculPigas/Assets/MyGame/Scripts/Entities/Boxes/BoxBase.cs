@@ -42,9 +42,9 @@ public class BoxBase : MonoBehaviour
         gameObject.SetActive(false);
 
         var player = GameManagement.CurrentPlayer.GetComponent<PlayerManager>();
-        
+
         if (healthyReward > 0) player.Heal(healthyReward);
-        else if (healthyReward < 0) player.TakeDamage(-healthyReward);
+        else if (healthyReward < 0) { player.TakeDamage(-healthyReward); Debug.Log("Eu dei dano "+ gameObject); };
 
         GameManagement.DebugLog($"{boxName} destruiu e aplicou recompensa: {healthyReward}");
     }

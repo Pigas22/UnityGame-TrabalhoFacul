@@ -127,6 +127,24 @@ public class MenuPrincipalManager : MonoBehaviour
         rtTextChildButtonAtual.localPosition = posTextChildButtonPrev;
 
         // -----------------------------------------------------------
+        // Inversão de posição no hierarchy
+        // Supondo que niveisDoJogo é uma lista de GameObjects
+        GameObject goPrev = niveisDoJogo[previousIndex];
+        GameObject goNext = niveisDoJogo[nextIndex];
+        GameObject goAtual = niveisDoJogo[indexFaseAtual];
+
+        // Exemplo: mover o objeto atual para a posição do anterior
+        int indexPaiPrev = goPrev.transform.GetSiblingIndex();
+        int indexPaiNext = goNext.transform.GetSiblingIndex();
+        int indexPaiAtual = goAtual.transform.GetSiblingIndex();
+
+        // Troca a posição no Hierarchy
+        goPrev.transform.SetSiblingIndex(indexPaiNext);
+        goNext.transform.SetSiblingIndex(indexPaiAtual);
+        goAtual.transform.SetSiblingIndex(indexPaiPrev);
+
+
+        // -----------------------------------------------------------
         // Atualiza o índice da fase
         indexFaseAtual = nextIndex;
         UpdateLevelPlayButton();
@@ -213,6 +231,22 @@ public class MenuPrincipalManager : MonoBehaviour
         rtTextChildButtonPrev.localPosition = posTextChildButtonAtual;  // fase anterior -> fase atual
         rtTextChildButtonNext.localPosition = posTextChildButtonPrev;   // prox fase     -> fase anterior
         rtTextChildButtonAtual.localPosition = posTextChildButtonNext;   // fase atual    -> fase prox 
+        // -----------------------------------------------------------
+        // Inversão de posição no hierarchy
+        // Supondo que niveisDoJogo é uma lista de GameObjects
+        GameObject goPrev = niveisDoJogo[previousIndex];
+        GameObject goNext = niveisDoJogo[nextIndex];
+        GameObject goAtual = niveisDoJogo[indexFaseAtual];
+
+        // Exemplo: mover o objeto atual para a posição do anterior
+        int indexPaiPrev = goPrev.transform.GetSiblingIndex();
+        int indexPaiNext = goNext.transform.GetSiblingIndex();
+        int indexPaiAtual = goAtual.transform.GetSiblingIndex();
+
+        // Troca a posição no Hierarchy
+        goPrev.transform.SetSiblingIndex(indexPaiAtual);
+        goNext.transform.SetSiblingIndex(indexPaiPrev);
+        goAtual.transform.SetSiblingIndex(indexPaiNext);
         // -----------------------------------------------------------
 
         // atualiza a variavel

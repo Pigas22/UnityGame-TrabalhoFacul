@@ -15,6 +15,7 @@ public class EnemyHitBox : MonoBehaviour
             
             if (!pm.PlayerIsTakingDamage())
             {
+                Debug.Log("Eu dei dano : " + gameObject.name);
                 pm.TakeDamage(GetComponentInParent<EnemyBase>().GetDamageValue());
             }
         }

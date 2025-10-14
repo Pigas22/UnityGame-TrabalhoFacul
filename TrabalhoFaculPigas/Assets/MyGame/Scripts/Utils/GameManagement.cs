@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using TMPro;
 using Unity.VisualScripting;
 using Unity.XR.OpenVR;
 using UnityEngine;
@@ -7,6 +8,8 @@ using UnityEngine;
 static class GameManagement
 {
     private static bool isDebugging = false;
+
+    private static float musicVolume = 0.1f;
     private static GameObject currentPlayer;
     private static int currentSkinIndex = 0;
     private static readonly GameObject[] playerPrefabs =  new GameObject[] {
@@ -36,6 +39,13 @@ static class GameManagement
         get => currentSkinIndex;
         set => currentSkinIndex = value;
     }
+
+    public static float MusicVolume
+    {
+        get => musicVolume;
+        set => musicVolume = value;
+    }
+
     public static GameObject CurrentPlayer
     {
         get { return currentPlayer; }
@@ -116,5 +126,39 @@ static class GameManagement
     public static void DebugLog(string msg)
     {
         if (isDebugging) Debug.Log(msg);
+    }
+
+    public static void AtualizaScoreInfoPlayer(PlayerManager playerManager, TextMeshProUGUI kiwiCollectableInfoText, TextMeshProUGUI orangeCollectableInfoText, TextMeshProUGUI pontosTotaisText)
+    {
+        if (playerManager.GetTotalScore() >= 0)
+        {
+            var lista = playerManager.GetCollectedItensInfos();
+
+            if (lista.Count > 0)
+            {
+                DebugLog("Primeiro item : " + playerManager.GetCollectedItensInfos()[0].ToString());
+                foreach (CollectedItensInfo item in lista)
+                {
+                    if (item.NameItem == "Kiwi")
+                    {
+                        kiwiCollectableInfoText.text = item.Qtd + " X " + item.Value + " = " + (item.Qtd * item.Value);
+                    }
+                    else if (item.NameItem == "Orange")
+                    {
+                        orangeCollectableInfoText.text = item.Qtd + " X " + item.Value + " = " + (item.Qtd * item.Value);
+                    }
+                }
+            }
+            else
+            {
+                DebugLog("Lista : " + playerManager.GetCollectedItensInfos().ToString());
+            }
+
+            pontosTotaisText.text = "Total de Pontos: " + playerManager.GetTotalScore().ToString();
+        }
+        else
+        {
+            pontosTotaisText.text = "Total de Pontos: --";
+        }
     }
 }

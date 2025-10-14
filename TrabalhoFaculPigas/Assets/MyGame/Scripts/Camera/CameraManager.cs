@@ -23,6 +23,7 @@ public class CameraManager : UniversalAdditionalCameraData
         {
             Destroy(gameObject);
         }
+
     }
 
     void LateUpdate()
