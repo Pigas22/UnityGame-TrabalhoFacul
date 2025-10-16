@@ -1,13 +1,8 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
-using UnityEditor.Timeline.Actions;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Diagnostics;
 using UnityEngine.SceneManagement;
-using UnityEngine.Tilemaps;
-using UnityEngine.UIElements;
 
 public class SceneManagerModel : MonoBehaviour
 {
@@ -20,38 +15,27 @@ public class SceneManagerModel : MonoBehaviour
     [SerializeField] protected GameObject telaFinalPontuacao;
     [SerializeField] protected GameObject scoreResumePanelInfo;
     [SerializeField] protected GameObject gameOverPanel;
-    [SerializeField] protected static bool gameOvered = false;
+    [SerializeField] protected bool gameOvered = false;
+    [SerializeField] protected bool gameFinished = false;
 
     private static GameObject MusicPlayer;
-    [SerializeField] AudioSource musicaFundo;
-    [SerializeField] AudioSource musicaVitoria;
+    [SerializeField] private AudioSource audioSource;
+
+    private AudioClip musicaFundo;
+    private AudioClip musicaGameOver;
 
 
     void Awake()
     {
         currentSkinIndex = GameManagement.CurrentSkinIndex;
-        ConfigData(); 
+        ConfigData();         
     }
 
     void Start()
     {
-        if (MusicPlayer == null)
-        {
-            MusicPlayer = new GameObject("Music Player");
-            MusicPlayer.transform.position = playerSpawnPoint.transform.position;
-            DontDestroyOnLoad(MusicPlayer);
-
-            musicaVitoria = MusicPlayer.AddComponent<AudioSource>();
-            musicaVitoria.clip = Resources.Load<AudioClip>("Sounds/Victory Sound");
-            musicaVitoria.volume = GameManagement.MusicVolume;
-            musicaVitoria.loop = false;
-
-            musicaFundo = MusicPlayer.AddComponent<AudioSource>();
-            musicaFundo.clip = Resources.Load<AudioClip>("Sounds/Megaman X Theme");
-            musicaFundo.volume = GameManagement.MusicVolume;
-            musicaFundo.loop = true;
-            musicaFundo.Play();
-        }
+        audioSource.clip = musicaFundo;
+        audioSource.loop = true;
+        audioSource.Play();
 
         GameObject playerObject = GameObject.Find("Player");
         if (playerObject != null) GameManagement.CurrentPlayer = playerObject;
@@ -63,6 +47,7 @@ public class SceneManagerModel : MonoBehaviour
         mainCamera.transform.localScale = new(1, 1, 1);
 
         telaFinalPontuacao.SetActive(false);
+        gameFinished = false;
         pauseMenuManager.GetComponent<PauseMenuManager>().enabled = true;
 
         gameOverPanel.SetActive(false);
@@ -73,11 +58,19 @@ public class SceneManagerModel : MonoBehaviour
     {
         if (!GameManagement.CurrentPlayer.GetComponent<PlayerManager>().IsAlive())
         {
+            audioSource.Stop();
+
+            audioSource.clip = musicaGameOver;
+            audioSource.loop = false;
+            audioSource.time = 0.5f;
+
+            audioSource.Play();
+            
             gameOvered = true;
             gameOverPanel.SetActive(true);
         } 
 
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && !gameFinished)
         {
             if (isPaused)
             {
@@ -106,6 +99,19 @@ public class SceneManagerModel : MonoBehaviour
 
         if (pauseMenuManager == null) pauseMenuManager = GameObject.Find("PauseMenuManager");
         pauseMenuManager.GetComponent<PauseMenuManager>().ResumeGame();
+
+        if (MusicPlayer == null)
+        {
+            MusicPlayer = new GameObject("Music Player");
+            MusicPlayer.transform.position = playerSpawnPoint.transform.position;
+            DontDestroyOnLoad(MusicPlayer);
+        }
+        audioSource = MusicPlayer.GetOrAddComponent<AudioSource>();
+        audioSource.volume = GameManagement.MusicVolume;
+        audioSource.playOnAwake = false;
+
+        musicaFundo = Resources.Load<AudioClip>("Sounds/Megaman X Theme");
+        musicaGameOver = Resources.Load<AudioClip>("Sounds/GameOver");
     }
 
     public Vector3 GetPlayerSpawnPoint()
@@ -115,13 +121,13 @@ public class SceneManagerModel : MonoBehaviour
 
     public void PauseGame()
     {
-        musicaFundo.Pause();
+        audioSource.Pause();
         pauseMenuManager.GetComponent<PauseMenuManager>().PauseGame();
     }
 
     public void ResumeGame()
     {
-        musicaFundo.UnPause();
+        audioSource.UnPause();
         pauseMenuManager.GetComponent<PauseMenuManager>().ResumeGame();
     }
 
@@ -138,9 +144,7 @@ public class SceneManagerModel : MonoBehaviour
 
     public void FinishGame()
     {
-        musicaFundo.UnPause();
-        musicaVitoria.Play();
-
+        gameFinished = true;
         GameManagement.CurrentPlayer.GetComponent<PlayerManager>().StopPlayer();
         
         StartCoroutine(StopGameTimeAtFinishRoutine());
@@ -148,7 +152,7 @@ public class SceneManagerModel : MonoBehaviour
 
     private IEnumerator StopGameTimeAtFinishRoutine()
     {
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.6f);
 
         telaFinalPontuacao.SetActive(true);
 

@@ -40,6 +40,10 @@ public class PlayerManager : CharacterBase, IMovable
     private int isTakingDamageHash = Animator.StringToHash("isTakingDamage");
     private int isDoubleJumpingHash = Animator.StringToHash("isDoubleJumping");
 
+    [SerializeField] private AudioSource playerAudioSource;
+    [SerializeField] private AudioClip damageAudio;
+
+
     void Awake()
     {
         isInvencible = true;
@@ -50,7 +54,12 @@ public class PlayerManager : CharacterBase, IMovable
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-       //collectedItensInfos = new List<CollectedItensInfo>();
+        GameObject playerMusicPlayer = new GameObject("Player Music Player");
+        playerAudioSource = playerMusicPlayer.GetOrAddComponent<AudioSource>();
+        damageAudio = Resources.Load<AudioClip>("Sounds/PlayerDamage");
+        playerAudioSource.clip = damageAudio;
+        playerAudioSource.volume = 1;
+        playerAudioSource.time = 0.7f;;
 
         playerRB = GetComponent<Rigidbody2D>();
         playerSR = GetComponent<SpriteRenderer>();
@@ -99,6 +108,9 @@ public class PlayerManager : CharacterBase, IMovable
             {
                 StartCoroutine(DisableInvencibleMode());
             }
+        } else if (OutOfCam() && isTakingDamage && IsAlive())
+        {
+            TeleportToSpawn();
         }
 
     }
@@ -195,23 +207,29 @@ public class PlayerManager : CharacterBase, IMovable
     {
         if (isTakingDamage) return;
 
-        if (base.IsAlive() )
+        if (base.IsAlive())
         {
             canMove = false;
             isTakingDamage = true;
             isJumping = false;
             isRunning = false;
-            UpdateAnimations();
-
-            // Aplica o "empurrão"
-            float direction = playerSR.flipX ? 1f : -1f;
-            playerRB.linearVelocityX = direction * (playerSpeed * 0.5f);
-            playerRB.linearVelocityY = jumpForce * 0.5f;
-
             base.TakeDamage(amount);
-        
+
+            playerAudioSource.Play();
+
+            UpdateAnimations();
+            AplicaEmpurrao(0.5f, 0.5f);
+
             StartCoroutine(TakingDamageRoutine());
         }
+    }
+
+    public void AplicaEmpurrao(float velocidade, float forcaPulo)
+    {
+        // Aplica o "empurrão"
+        float direction = playerSR.flipX ? 1f : -1f;
+        playerRB.linearVelocityX = direction * (playerSpeed * velocidade);
+        playerRB.linearVelocityY = jumpForce * forcaPulo;
     }
 
     private IEnumerator TakingDamageRoutine()
@@ -233,6 +251,13 @@ public class PlayerManager : CharacterBase, IMovable
 
         if (OutOfCam()) TeleportToSpawn();
     }
+
+    public override void Die()
+    {
+        Destroy(playerAudioSource.transform.parent);
+        base.Die();
+    }
+
 
     void TeleportToSpawn()
     {
@@ -319,7 +344,7 @@ public class PlayerManager : CharacterBase, IMovable
     private IEnumerator FreezePlayerRoutine()
     {
         yield return new WaitForSeconds(0.5f);
-        playerRB.constraints = RigidbodyConstraints2D.FreezePositionX; //| RigidbodyConstraints2D.FreezePositionY;
+        playerRB.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezePositionY;
     }
     
     private void UpdatePlayerStats()

@@ -4,8 +4,10 @@ using UnityEngine;
 public class PlayerHitBox : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    [SerializeField] public bool colidindoComInimigo = false;
-    [SerializeField] public bool colidindoComChao = false;
+    public bool colidindoComInimigo = false;
+    public bool colidindoComChao = false;
+    protected static AudioSource audioHitted;
+
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.CompareTag("Chao"))
@@ -16,10 +18,28 @@ public class PlayerHitBox : MonoBehaviour
         }
     }
 
+    void Start()
+    {
+        if (gameObject.GetComponent<AudioSource>() == null)
+        {
+            audioHitted = gameObject.AddComponent<AudioSource>();
+            audioHitted.clip = Resources.Load<AudioClip>("Sounds/Tuc");
+            audioHitted.volume = 1f;
+            audioHitted.loop = false;
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Enemy"))
         {
+            audioHitted.Stop();
+            audioHitted.time = 2.2f;
+            audioHitted.Play();
+
+            // Aplica o "empurrão"
+            GameManagement.CurrentPlayer.GetComponent<PlayerManager>().AplicaEmpurrao(0.65f, 0.45f);
+
             GameManagement.DebugLog("Player hit a enemy!");
             colidindoComInimigo = true;
 

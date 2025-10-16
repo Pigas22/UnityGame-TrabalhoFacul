@@ -34,7 +34,7 @@ public class CameraManager : UniversalAdditionalCameraData
 
             // Limita a posição da câmera dentro dos limites
             float clampedX = Mathf.Clamp(desiredPosition.x, -camLimits.x, camLimits.x);
-            float clampedY = Mathf.Clamp(desiredPosition.y, -3, camLimits.y);
+            float clampedY = Mathf.Clamp(desiredPosition.y, -(camLimits.y - 3), camLimits.y);
 
             Vector3 clampedPosition = new Vector3(clampedX, clampedY, desiredPosition.z);
 

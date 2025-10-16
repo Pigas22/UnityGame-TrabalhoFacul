@@ -847,22 +847,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1160616597126872668, guid: 840279c9c936a9246af240dd5ad5b51c, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 424.99997
-      objectReference: {fileID: 0}
-    - target: {fileID: 1160616597126872668, guid: 840279c9c936a9246af240dd5ad5b51c, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 254.00003
-      objectReference: {fileID: 0}
-    - target: {fileID: 2629873163937125308, guid: 840279c9c936a9246af240dd5ad5b51c, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 471
-      objectReference: {fileID: 0}
-    - target: {fileID: 2629873163937125308, guid: 840279c9c936a9246af240dd5ad5b51c, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 254
-      objectReference: {fileID: 0}
     - target: {fileID: 6676901201209791404, guid: 840279c9c936a9246af240dd5ad5b51c, type: 3}
       propertyPath: m_Name
       value: PlayerHeartUIController
@@ -871,10 +855,6 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 1824347154}
-    - target: {fileID: 8521280526877931114, guid: 840279c9c936a9246af240dd5ad5b51c, type: 3}
-      propertyPath: m_PlaneDistance
-      value: 10
-      objectReference: {fileID: 0}
     - target: {fileID: 8909032373628097110, guid: 840279c9c936a9246af240dd5ad5b51c, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -966,14 +946,6 @@ PrefabInstance:
     - target: {fileID: 8909032373628097110, guid: 840279c9c936a9246af240dd5ad5b51c, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9171528393000615971, guid: 840279c9c936a9246af240dd5ad5b51c, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 377.99997
-      objectReference: {fileID: 0}
-    - target: {fileID: 9171528393000615971, guid: 840279c9c936a9246af240dd5ad5b51c, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 254.00003
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
